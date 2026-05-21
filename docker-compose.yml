@@ -1,0 +1,29 @@
+services:
+  web:
+    build: .
+    volumes:
+      - .:/app
+      - sqlite_data:/app/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SECRET_KEY=django-insecure-tk$^n+0(f9pvd9(s03)0)%$o^m0&so=s0!f)-n)=jptbkwl8e3
+      - DJANGO_DEBUG=True
+      - DJANGO_ALLOWED_HOSTS=*
+    command: >
+      sh -c "python app/manage.py migrate &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - staticfiles:/app/staticfiles
+    depends_on:
+      - web
+
+volumes:
+  sqlite_data:
+  staticfiles:
