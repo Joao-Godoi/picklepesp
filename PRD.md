@@ -904,12 +904,12 @@ Entregaveis:
 
 Tarefas:
 
-- [ ] Criar view de grupos.
-- [ ] Criar selector para buscar classificacao.
-- [ ] Criar template de tabela de classificacao.
-- [ ] Criar template de lista de partidas.
-- [ ] Aplicar visual escuro e compacto.
-- [ ] Testar renderizacao em mobile e desktop.
+- [x] Criar view de grupos.
+- [x] Criar selector para buscar classificacao.
+- [x] Criar template de tabela de classificacao.
+- [x] Criar template de lista de partidas.
+- [x] Aplicar visual escuro e compacto.
+- [x] Testar renderizacao em mobile e desktop.
 
 Criterios de conclusao:
 
@@ -928,13 +928,13 @@ Entregaveis:
 
 Tarefas:
 
-- [ ] Implementar geracao dos jogos 5 a 8.
-- [ ] Implementar estrutura dos jogos 9 a 16.
-- [ ] Implementar geracao dos jogos 1 a 4.
-- [ ] Criar view de playoffs.
-- [ ] Criar view de placements.
-- [ ] Criar template de bracket responsivo.
-- [ ] Criar testes de geracao de confrontos.
+- [x] Implementar geracao dos jogos 5 a 8.
+- [x] Implementar estrutura dos jogos 9 a 16.
+- [x] Implementar geracao dos jogos 1 a 4.
+- [x] Criar view de playoffs.
+- [x] Criar view de placements.
+- [x] Criar template de bracket responsivo.
+- [x] Criar testes de geracao de confrontos.
 
 Criterios de conclusao:
 
@@ -953,12 +953,12 @@ Entregaveis:
 
 Tarefas:
 
-- [ ] Implementar servico de recalculo global.
-- [ ] Implementar propagacao no mata-mata principal.
-- [ ] Implementar propagacao nas disputas de posicoes.
-- [ ] Integrar recalculo ao salvamento no admin.
-- [ ] Criar comando `recalculate_tournament`.
-- [ ] Criar testes de propagacao.
+- [x] Implementar servico de recalculo global.
+- [x] Implementar propagacao no mata-mata principal.
+- [x] Implementar propagacao nas disputas de posicoes.
+- [x] Integrar recalculo ao salvamento no admin.
+- [x] Criar comando `recalculate_tournament`.
+- [x] Criar testes de propagacao.
 
 Criterios de conclusao:
 
@@ -977,12 +977,12 @@ Entregaveis:
 
 Tarefas:
 
-- [ ] Refinar `base.html`.
-- [ ] Refinar pagina inicial.
-- [ ] Melhorar tabelas em telas pequenas.
-- [ ] Melhorar brackets em desktop.
-- [ ] Melhorar brackets em mobile.
-- [ ] Destacar vencedores e status.
+- [x] Refinar `base.html`.
+- [x] Refinar pagina inicial.
+- [x] Melhorar tabelas em telas pequenas.
+- [x] Melhorar brackets em desktop.
+- [x] Melhorar brackets em mobile.
+- [x] Destacar vencedores e status.
 
 Criterios de conclusao:
 

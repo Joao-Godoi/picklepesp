@@ -1,5 +1,23 @@
 from django.shortcuts import render
 
+from tournament.models import Match
+from tournament.selectors import get_groups_page_data
+
 
 def home(request):
-    return render(request, "core/home.html")
+    upcoming_matches = (
+        Match.objects.filter(status__in=[Match.STATUS_READY, Match.STATUS_PENDING])
+        .select_related("team_a", "team_b")
+        .order_by("sort_order", "match_number")[:6]
+    )
+    finished_count = Match.objects.filter(status=Match.STATUS_FINISHED).count()
+    total_count = Match.objects.count()
+    return render(
+        request,
+        "core/home.html",
+        {
+            "upcoming_matches": upcoming_matches,
+            "finished_count": finished_count,
+            "total_count": total_count,
+        },
+    )
