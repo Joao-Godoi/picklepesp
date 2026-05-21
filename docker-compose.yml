@@ -2,7 +2,7 @@ services:
   web:
     build: .
     volumes:
-      - sqlite_data:/app/app
+      - sqlite_data:/app/data
       - staticfiles:/app/staticfiles
     ports:
       - "8000:8000"
@@ -10,6 +10,7 @@ services:
       - DJANGO_SECRET_KEY=django-insecure-tk$^n+0(f9pvd9(s03)0)%$o^m0&so=s0!f)-n)=jptbkwl8e3
       - DJANGO_DEBUG=True
       - DJANGO_ALLOWED_HOSTS=*
+      - DATABASE_PATH=/app/data/db.sqlite3
 
   nginx:
     image: nginx:alpine
