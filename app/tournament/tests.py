@@ -1,5 +1,6 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 from tournament.models import Group, Team, Match, MatchSet
 from tournament.services import (
@@ -8,6 +9,8 @@ from tournament.services import (
     validate_match_for_finish,
     finalize_match,
     compute_group_standings,
+    propagate_match_result,
+    recalculate_tournament,
 )
 
 
@@ -736,3 +739,181 @@ class GroupStandingsTest(TestCase):
             ).count(),
             10,
         )
+
+
+class PropagationTest(TestCase):
+    def setUp(self):
+        self.group = Group.objects.create(name="A")
+        self.team_a = Team.objects.create(
+            player1_name="P1", player2_name="P2", group=self.group
+        )
+        self.team_b = Team.objects.create(
+            player1_name="P3", player2_name="P4", group=self.group
+        )
+        self.team_c = Team.objects.create(
+            player1_name="P5", player2_name="P6", group=self.group
+        )
+        self.team_d = Team.objects.create(
+            player1_name="P7", player2_name="P8", group=self.group
+        )
+
+    def test_winner_propagates_to_dependent_match(self):
+        source = Match.objects.create(
+            phase=Match.PHASE_QUARTERFINAL,
+            match_number=5,
+            bracket_type=Match.BRACKET_MAIN,
+            team_a=self.team_a,
+            team_b=self.team_b,
+            status=Match.STATUS_READY,
+            best_of=3,
+            sort_order=5,
+        )
+        dependent = Match.objects.create(
+            phase=Match.PHASE_SEMIFINAL,
+            match_number=13,
+            bracket_type=Match.BRACKET_MAIN,
+            source_match_a=source,
+            source_match_a_is_winner=True,
+            status=Match.STATUS_BLOCKED,
+            best_of=3,
+            sort_order=13,
+        )
+        MatchSet.objects.create(
+            match=source, set_number=1, team_a_points=11, team_b_points=5
+        )
+        MatchSet.objects.create(
+            match=source, set_number=2, team_a_points=11, team_b_points=7
+        )
+        source.winner = self.team_a
+        source.status = Match.STATUS_FINISHED
+        source.save()
+
+        propagate_match_result(source)
+        dependent.refresh_from_db()
+        self.assertEqual(dependent.team_a_id, self.team_a.pk)
+
+    def test_loser_propagates_to_fifth_eighth(self):
+        source = Match.objects.create(
+            phase=Match.PHASE_QUARTERFINAL,
+            match_number=5,
+            bracket_type=Match.BRACKET_MAIN,
+            team_a=self.team_a,
+            team_b=self.team_b,
+            status=Match.STATUS_READY,
+            best_of=3,
+            sort_order=5,
+        )
+        dependent = Match.objects.create(
+            phase=Match.PHASE_FIFTH_TO_EIGHTH,
+            match_number=9,
+            bracket_type=Match.BRACKET_MAIN,
+            source_match_a=source,
+            source_match_a_is_winner=False,
+            status=Match.STATUS_BLOCKED,
+            best_of=3,
+            sort_order=9,
+        )
+        MatchSet.objects.create(
+            match=source, set_number=1, team_a_points=11, team_b_points=5
+        )
+        MatchSet.objects.create(
+            match=source, set_number=2, team_a_points=11, team_b_points=7
+        )
+        source.winner = self.team_a
+        source.status = Match.STATUS_FINISHED
+        source.save()
+
+        propagate_match_result(source)
+        dependent.refresh_from_db()
+        self.assertEqual(dependent.team_a_id, self.team_b.pk)
+
+    def test_both_teams_ready_changes_status(self):
+        source1 = Match.objects.create(
+            phase=Match.PHASE_QUARTERFINAL,
+            match_number=5,
+            bracket_type=Match.BRACKET_MAIN,
+            team_a=self.team_a,
+            team_b=self.team_b,
+            status=Match.STATUS_FINISHED,
+            winner=self.team_a,
+            best_of=3,
+            sort_order=5,
+        )
+        source2 = Match.objects.create(
+            phase=Match.PHASE_QUARTERFINAL,
+            match_number=6,
+            bracket_type=Match.BRACKET_MAIN,
+            team_a=self.team_c,
+            team_b=self.team_d,
+            status=Match.STATUS_FINISHED,
+            winner=self.team_c,
+            best_of=3,
+            sort_order=6,
+        )
+        dependent = Match.objects.create(
+            phase=Match.PHASE_SEMIFINAL,
+            match_number=13,
+            bracket_type=Match.BRACKET_MAIN,
+            source_match_a=source1,
+            source_match_a_is_winner=True,
+            source_match_b=source2,
+            source_match_b_is_winner=True,
+            status=Match.STATUS_BLOCKED,
+            best_of=3,
+            sort_order=13,
+        )
+        propagate_match_result(source1)
+        propagate_match_result(source2)
+        dependent.refresh_from_db()
+        self.assertEqual(dependent.team_a_id, self.team_a.pk)
+        self.assertEqual(dependent.team_b_id, self.team_c.pk)
+        self.assertEqual(dependent.status, Match.STATUS_READY)
+
+
+class PublicViewsTest(TestCase):
+    def setUp(self):
+        from tournament.management.commands.seed_tournament import Command
+
+        cmd = Command()
+        cmd.handle()
+
+    def test_home_page_200(self):
+        c = Client()
+        response = c.get("/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_groups_page_200(self):
+        c = Client()
+        response = c.get("/groups/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_playoffs_page_200(self):
+        c = Client()
+        response = c.get("/playoffs/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_placements_page_200(self):
+        c = Client()
+        response = c.get("/placements/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_groups_page_contains_group_data(self):
+        c = Client()
+        response = c.get("/groups/")
+        self.assertContains(response, "Arthur / Flavio")
+        self.assertContains(response, "Aoki / Bruno")
+        self.assertContains(response, "Pena / Vincent")
+
+
+class AdminAccessTest(TestCase):
+    def test_admin_redirects_unauthenticated(self):
+        c = Client()
+        response = c.get("/admin/")
+        self.assertEqual(response.status_code, 302)
+
+    def test_admin_accessible_by_superuser(self):
+        User.objects.create_superuser("admin", "admin@test.com", "pass123")
+        c = Client()
+        c.login(username="admin", password="pass123")
+        response = c.get("/admin/")
+        self.assertEqual(response.status_code, 200)
