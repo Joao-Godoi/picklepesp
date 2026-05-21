@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.venv/
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+db.sqlite3-wal
+staticfiles/
+media/
+
+# Environment and secrets
+.env
+.env.*
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documents and PRDs
+*.md
+!requirements.txt
+
+# Prompt files
+PROMPT_*
