@@ -64,12 +64,14 @@ class Match(models.Model):
     ]
 
     STATUS_PENDING = "pending"
+    STATUS_READY = "ready"
     STATUS_IN_PROGRESS = "in_progress"
     STATUS_FINISHED = "finished"
     STATUS_BLOCKED = "blocked"
 
     STATUS_CHOICES = [
         (STATUS_PENDING, "Pendente"),
+        (STATUS_READY, "Pronta"),
         (STATUS_IN_PROGRESS, "Em andamento"),
         (STATUS_FINISHED, "Finalizada"),
         (STATUS_BLOCKED, "Bloqueada"),
@@ -116,11 +118,41 @@ class Match(models.Model):
         "Status", max_length=15, choices=STATUS_CHOICES, default=STATUS_PENDING
     )
     best_of = models.PositiveIntegerField("Melhor de", default=3)
+    source_match_a = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="dependent_as_team_a",
+        verbose_name="Jogo de origem time A",
+        help_text="Partida que define o time A desta partida",
+    )
+    source_match_a_is_winner = models.BooleanField(
+        "Time A e vencedor do jogo de origem",
+        null=True,
+        blank=True,
+        help_text="True se time A vem do vencedor, False se do perdedor",
+    )
+    source_match_b = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="dependent_as_team_b",
+        verbose_name="Jogo de origem time B",
+        help_text="Partida que define o time B desta partida",
+    )
+    source_match_b_is_winner = models.BooleanField(
+        "Time B e vencedor do jogo de origem",
+        null=True,
+        blank=True,
+        help_text="True se time B vem do vencedor, False se do perdedor",
+    )
     source_team_a = models.CharField(
-        "Origem time A", max_length=100, blank=True, default=""
+        "Descricao origem time A", max_length=100, blank=True, default=""
     )
     source_team_b = models.CharField(
-        "Origem time B", max_length=100, blank=True, default=""
+        "Descricao origem time B", max_length=100, blank=True, default=""
     )
     final_position_winner = models.PositiveIntegerField(
         "Posicao vencedor", null=True, blank=True
@@ -159,6 +191,11 @@ class Match(models.Model):
                 errors["winner"] = "Vencedor e obrigatorio para partida finalizada."
             elif self.winner_id not in (self.team_a_id, self.team_b_id):
                 errors["winner"] = "Vencedor deve ser Time A ou Time B."
+        if self.status == self.STATUS_READY:
+            if not self.team_a_id:
+                errors["team_a"] = "Time A e obrigatorio para partida pronta."
+            if not self.team_b_id:
+                errors["team_b"] = "Time B e obrigatorio para partida pronta."
         if errors:
             raise ValidationError(errors)
 
@@ -188,10 +225,19 @@ class MatchSet(models.Model):
         if self.team_a_points == self.team_b_points:
             errors["team_a_points"] = "Set nao pode terminar empatado."
             errors["team_b_points"] = "Set nao pode terminar empatado."
-        has_11 = self.team_a_points >= 11 or self.team_b_points >= 11
-        if not has_11 and self.match_id and self.match.status == Match.STATUS_FINISHED:
-            errors["team_a_points"] = "Pelo menos um lado deve atingir 11 pontos."
+        else:
+            if self.team_a_points < 11 and self.team_b_points < 11:
+                errors["team_a_points"] = "Pelo menos um lado deve atingir 11 pontos."
+                errors["team_b_points"] = "Pelo menos um lado deve atingir 11 pontos."
+            if self.team_a_points > 11 or self.team_b_points > 11:
+                errors["team_a_points"] = "Pontuacao maxima por set e 11 pontos."
+                errors["team_b_points"] = "Pontuacao maxima por set e 11 pontos."
         if self.match_id:
+            best_of = self.match.best_of
+            if self.set_number < 1 or self.set_number > best_of:
+                errors["set_number"] = (
+                    f"Numero do set deve estar entre 1 e {best_of}."
+                )
             existing_count = MatchSet.objects.filter(match=self.match).exclude(
                 pk=self.pk
             ).count()
