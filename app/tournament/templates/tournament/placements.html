@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load static team_tags %}
 
-{% block title %}PicklePesp - Posicoes{% endblock %}
+{% block title %}PicklePesp - Disputa de Posicoes{% endblock %}
 
-{% block nav-placements-active %}active{% endblock %}
-{% block nav-placements-class %}text-green-400 bg-green-400/10{% endblock %}
+{% block nav-placements-active %}active-nav{% endblock %}
+{% block nav-placements-bar %}active{% endblock %}
 
 {% block content %}
 <div class="mb-5">
@@ -18,49 +18,51 @@
     <div class="bracket-phase">
         <div class="bracket-phase-title">{{ phase_data.label }}</div>
         {% for match in phase_data.matches %}
-        <div class="bracket-match {{ match.status }}">
-            <div class="bracket-match-number">J{{ match.match_number }}</div>
-            <div class="bracket-match-body">
-                <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.double_1_id %}winner{% elif match.double_1_id %}loser{% endif %}{% endif %}">
-                    <span class="bracket-team-name">
-                        {% if match.double_1 %}{{ match.double_1|team_display:is_admin }}
-                        {% elif match.source_double_1_desc %}<span class="bracket-team-tbd">{{ match.source_double_1_desc }}</span>
-                        {% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
-                    </span>
-                    {% if match.status == 'finished' %}
-                    <div class="bracket-team-scores">
-                        {% for set in match.sets.all %}
-                        <span class="bracket-set-score {% if set.points_double_1 > set.points_double_2 %}won{% endif %}">{{ set.points_double_1 }}</span>
-                        {% endfor %}
+        <a href="{% url 'match_detail' match.match_number %}" class="match-card-link">
+            <div class="bracket-match {{ match.status }}">
+                <div class="bracket-match-number">J{{ match.match_number }}</div>
+                <div class="bracket-match-body">
+                    <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.double_1_id %}winner{% elif match.double_1_id %}loser{% endif %}{% endif %}">
+                        <span class="bracket-team-name">
+                            {% if match.double_1 %}{{ match.double_1.name }}
+                            {% elif match.source_double_1_desc %}<span class="bracket-team-tbd">{{ match.source_double_1_desc }}</span>
+                            {% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                        </span>
+                        {% if match.status == 'finished' or match.status == 'in_progress' %}
+                        <div class="bracket-team-scores">
+                            {% for set in match.sets.all %}
+                            <span class="bracket-set-score {% if set.points_double_1 > set.points_double_2 %}won{% endif %}">{{ set.points_double_1 }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </div>
+                    <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.double_2_id %}winner{% elif match.double_2_id %}loser{% endif %}{% endif %}">
+                        <span class="bracket-team-name">
+                            {% if match.double_2 %}{{ match.double_2.name }}
+                            {% elif match.source_double_2_desc %}<span class="bracket-team-tbd">{{ match.source_double_2_desc }}</span>
+                            {% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                        </span>
+                        {% if match.status == 'finished' or match.status == 'in_progress' %}
+                        <div class="bracket-team-scores">
+                            {% for set in match.sets.all %}
+                            <span class="bracket-set-score {% if set.points_double_2 > set.points_double_1 %}won{% endif %}">{{ set.points_double_2 }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if match.final_position_loser %}
+                <div style="display:flex;flex-direction:column;justify-content:center;padding:0 0.5rem;font-size:0.5625rem;color:var(--text-muted);">
+                    {% if match.final_position_winner and match.status == 'finished' %}
+                    <span>{{ match.final_position_winner }}&#176;</span>
+                    {% endif %}
+                    {% if match.status == 'finished' %}
+                    <span>{{ match.final_position_loser }}&#176;</span>
                     {% endif %}
                 </div>
-                <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.double_2_id %}winner{% elif match.double_2_id %}loser{% endif %}{% endif %}">
-                    <span class="bracket-team-name">
-                        {% if match.double_2 %}{{ match.double_2|team_display:is_admin }}
-                        {% elif match.source_double_2_desc %}<span class="bracket-team-tbd">{{ match.source_double_2_desc }}</span>
-                        {% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
-                    </span>
-                    {% if match.status == 'finished' %}
-                    <div class="bracket-team-scores">
-                        {% for set in match.sets.all %}
-                        <span class="bracket-set-score {% if set.points_double_2 > set.points_double_1 %}won{% endif %}">{{ set.points_double_2 }}</span>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-            {% if match.final_position_loser %}
-            <div style="display:flex;flex-direction:column;justify-content:center;padding:0 0.5rem;font-size:0.5625rem;color:var(--text-muted);">
-                {% if match.final_position_winner and match.status == 'finished' %}
-                <span>{{ match.final_position_winner }}&#176;</span>
-                {% endif %}
-                {% if match.status == 'finished' %}
-                <span>{{ match.final_position_loser }}&#176;</span>
                 {% endif %}
             </div>
-            {% endif %}
-        </div>
+        </a>
         {% endfor %}
     </div>
     {% endfor %}

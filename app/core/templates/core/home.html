@@ -1,22 +1,20 @@
 {% extends "base.html" %}
 {% load static team_tags %}
 
-{% block title %}PicklePesp - Campeonato Interno de Pickleball{% endblock %}
+{% block title %}PicklePesp - Grupos{% endblock %}
 
-{% block nav-home-active %}active{% endblock %}
-{% block nav-home-class %}text-green-400 bg-green-400/10{% endblock %}
+{% block nav-groups-active %}active-nav{% endblock %}
+{% block nav-groups-bar %}active{% endblock %}
 
 {% block content %}
 <div class="mb-6">
-    <p class="section-title">Campeonato Interno</p>
-    <h1 class="text-2xl font-extrabold tracking-tight text-white leading-tight">
-        PicklePesp<br>
-        <span class="text-green-400">Classificacao em tempo real</span>
-    </h1>
+    <p class="section-title">Fase de Grupos</p>
+    <h1 class="page-title">Classificacao dos Grupos</h1>
+    <p class="page-subtitle">Acompanhe a classificacao e resultados em tempo real</p>
 </div>
 
 {% if total_count > 0 %}
-<div class="card mb-4">
+<div class="card mb-5">
     <div class="card-header">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
@@ -32,149 +30,123 @@
 </div>
 {% endif %}
 
-<div class="card mb-4">
-    <a href="{% url 'groups' %}" class="nav-card">
-        <div class="nav-card-icon nav-card-icon-green">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+{% for data in groups_data %}
+<div class="group-section">
+    <details class="group-accordion"{% if forloop.first %} open{% endif %}>
+        <summary class="group-header">
+            <div class="group-header-left">
+                <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"/>
+                </svg>
+                <span class="group-name">Grupo {{ data.group.name }}</span>
+                <span class="group-badge">{{ data.standings|length }} duplas</span>
+            </div>
+            <span class="group-qualify-badge">{{ data.qualified_count }} classificados</span>
+        </summary>
+
+        <div class="accordion-body">
+            <div class="card mb-4">
+                <div class="card-header standings-header">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20V10"/>
+                        <path d="M18 20V4"/>
+                        <path d="M6 20v-4"/>
+                    </svg>
+                    <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Classificacao</span>
+                </div>
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th class="pos-col">#</th>
+                            <th>Dupla</th>
+                            <th class="num-col">J</th>
+                            <th class="num-col">V</th>
+                            <th class="num-col">D</th>
+                            <th class="num-col">SS</th>
+                            <th class="num-col">SP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in data.standings %}
+                        <tr class="{% if s.position <= data.qualified_count %}qualified-row{% elif s.losses > 0 and s.wins == 0 %}eliminated-row{% endif %}">
+                            <td class="pos-col {% if s.position <= 3 %}pos-{{ s.position }}{% endif %}">{{ s.position }}</td>
+                            <td class="team-name">{{ s.double.name }}</td>
+                            <td class="num-col">{{ s.games }}</td>
+                            <td class="num-col">{{ s.wins }}</td>
+                            <td class="num-col">{{ s.losses }}</td>
+                            <td class="num-col">{{ s.sets_balance }}</td>
+                            <td class="num-col">{{ s.points_balance }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if data.matches %}
+            <div class="card">
+                <div class="card-header">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <line x1="3" y1="9" x2="21" y2="9"/>
+                    </svg>
+                    <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Partidas</span>
+                </div>
+                <div class="card-body" style="padding:0;">
+                    {% for match in data.matches %}
+                    <a href="{% url 'match_detail' match.match_number %}" class="match-card-link">
+                        <div class="bracket-match {{ match.status }}">
+                            <div class="bracket-match-number">J{{ match.match_number }}</div>
+                            <div class="bracket-match-body">
+                                {% if match.double_1 or match.double_2 or match.source_double_1_desc or match.source_double_2_desc %}
+                                <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.double_1_id %}winner{% elif match.double_1_id %}loser{% endif %}{% endif %}">
+                                    <span class="bracket-team-name">
+                                        {% if match.double_1 %}{{ match.double_1.name }}{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                                    </span>
+                                    {% if match.status == 'finished' or match.status == 'in_progress' %}
+                                    <div class="bracket-team-scores">
+                                        {% for set in match.sets.all %}
+                                        <span class="bracket-set-score {% if set.points_double_1 > set.points_double_2 %}won{% endif %}">{{ set.points_double_1 }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.double_2_id %}winner{% elif match.double_2_id %}loser{% endif %}{% endif %}">
+                                    <span class="bracket-team-name">
+                                        {% if match.double_2 %}{{ match.double_2.name }}{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                                    </span>
+                                    {% if match.status == 'finished' or match.status == 'in_progress' %}
+                                    <div class="bracket-team-scores">
+                                        {% for set in match.sets.all %}
+                                        <span class="bracket-set-score {% if set.points_double_2 > set.points_double_1 %}won{% endif %}">{{ set.points_double_2 }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </details>
+</div>
+{% empty %}
+<div class="card">
+    <div class="empty-state">
+        <div class="empty-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="7" height="7" rx="1"/>
                 <rect x="14" y="3" width="7" height="7" rx="1"/>
                 <rect x="3" y="14" width="7" height="7" rx="1"/>
                 <rect x="14" y="14" width="7" height="7" rx="1"/>
             </svg>
         </div>
-        <div class="nav-card-content">
-            <div class="nav-card-title">Grupos</div>
-            <div class="nav-card-desc">Classificacao e resultados da fase de grupos</div>
-        </div>
-        <div class="nav-card-arrow">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"/>
-            </svg>
-        </div>
-    </a>
-    <a href="{% url 'playoffs' %}" class="nav-card">
-        <div class="nav-card-icon nav-card-icon-yellow">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="8 6 2 12 8 18"/>
-                <polyline points="16 6 22 12 16 18"/>
-            </svg>
-        </div>
-        <div class="nav-card-content">
-            <div class="nav-card-title">Playoffs</div>
-            <div class="nav-card-desc">Chave do mata-mata principal</div>
-        </div>
-        <div class="nav-card-arrow">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"/>
-            </svg>
-        </div>
-    </a>
-    <a href="{% url 'placements' %}" class="nav-card">
-        <div class="nav-card-icon nav-card-icon-blue">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 20V10"/>
-                <path d="M18 20V4"/>
-                <path d="M6 20v-4"/>
-            </svg>
-        </div>
-        <div class="nav-card-content">
-            <div class="nav-card-title">Posicoes</div>
-            <div class="nav-card-desc">Disputa do 9&#176; ao 14&#176; lugar</div>
-        </div>
-        <div class="nav-card-arrow">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"/>
-            </svg>
-        </div>
-    </a>
-</div>
-
-{% if upcoming_matches %}
-<div class="card mb-4">
-    <div class="card-header">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
-        </svg>
-        <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Proximos Jogos</span>
-    </div>
-    <div class="card-body match-list">
-        {% for match in upcoming_matches %}
-        <div class="match-card {{ match.status }}">
-            <div class="match-teams">
-                <div class="match-team">
-                    {% if match.double_1 %}{{ match.double_1|team_display:is_admin }}{% elif match.source_double_1_desc %}<span class="bracket-team-tbd">{{ match.source_double_1_desc }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
-                 </div>
-                 <div class="match-team">
-                     {% if match.double_2 %}{{ match.double_2|team_display:is_admin }}{% elif match.source_double_2_desc %}<span class="bracket-team-tbd">{{ match.source_double_2_desc }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
-                </div>
-            </div>
-            <span class="match-status status-{{ match.status }}">{{ match.get_status_display }}</span>
-        </div>
-        {% endfor %}
+        <div class="empty-title">Nenhum grupo encontrado</div>
+        <div class="empty-desc">Execute o seed do campeonato para popular os dados.</div>
     </div>
 </div>
-{% endif %}
-
-<div class="card mb-4">
-    <div class="card-header">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="16" x2="12" y2="12"/>
-            <line x1="12" y1="8" x2="12.01" y2="8"/>
-        </svg>
-        <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Estrutura do Campeonato</span>
-    </div>
-    <div class="card-body">
-        <div class="info-grid">
-            <div class="info-item">
-                <span class="info-label">Grupo A</span>
-                <span class="info-value">5 duplas</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Grupo B</span>
-                <span class="info-value">5 duplas</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Grupo C</span>
-                <span class="info-value">4 duplas</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Formato</span>
-                <span class="info-value">Grupos + mata-mata</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Playoffs</span>
-                <span class="info-value">Melhor de 3 sets</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Posicoes</span>
-                <span class="info-value">1 set ate 11 pts</span>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-header">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
-        </svg>
-        <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Regras de Classificacao</span>
-    </div>
-    <div class="card-body">
-        <div class="info-grid" style="grid-template-columns: 1fr;">
-            <div class="info-item">
-                <span class="info-label">Criterios de desempate</span>
-                <span class="info-value">1&#176; Vitorias &middot; 2&#176; Saldo de sets &middot; 3&#176; Saldo de pontos</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">Classificados</span>
-                <span class="info-value">3&#176; A + 3&#176; B + 2&#176; C</span>
-            </div>
-        </div>
-    </div>
-</div>
+{% endfor %}
 {% endblock %}
