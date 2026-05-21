@@ -13,6 +13,74 @@
     <p class="page-subtitle">Acompanhe a classificacao e resultados</p>
 </div>
 
+{% for data in groups_data %}
+<div class="group-section">
+    <div class="group-header">
+        <span class="group-name">{{ data.group.name }}</span>
+        <span class="group-badge">{{ data.standings|length }} duplas</span>
+    </div>
+    <div class="card mb-3">
+        <table class="standings-table">
+            <thead>
+                <tr>
+                    <th class="pos-col">#</th>
+                    <th>Dupla</th>
+                    <th class="num-col">J</th>
+                    <th class="num-col">V</th>
+                    <th class="num-col">D</th>
+                    <th class="num-col">SS</th>
+                    <th class="num-col">SP</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in data.standings %}
+                <tr>
+                    <td class="pos-col {% if s.position <= 3 %}pos-{{ s.position }}{% endif %}">{{ s.position }}</td>
+                    <td class="team-name">{{ s.team }}</td>
+                    <td class="num-col">{{ s.games }}</td>
+                    <td class="num-col">{{ s.wins }}</td>
+                    <td class="num-col">{{ s.losses }}</td>
+                    <td class="num-col">{{ s.sets_balance }}</td>
+                    <td class="num-col">{{ s.points_balance }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if data.matches %}
+    <div class="card">
+        <div class="card-header">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+            </svg>
+            <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Partidas</span>
+        </div>
+        <div class="card-body match-list">
+            {% for match in data.matches %}
+            <div class="match-card {{ match.status }}">
+                <div class="match-teams">
+                    <div class="match-team {% if match.status == 'finished' %}{% if match.winner_id == match.team_a_id %}winner{% else %}loser{% endif %}{% endif %}">
+                        {% if match.team_a %}{{ match.team_a }}{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                    </div>
+                    <div class="match-team {% if match.status == 'finished' %}{% if match.winner_id == match.team_b_id %}winner{% else %}loser{% endif %}{% endif %}">
+                        {% if match.team_b %}{{ match.team_b }}{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                    </div>
+                </div>
+                {% if match.status == 'finished' %}
+                <div class="match-score">
+                    {% for set in match.sets.all %}{{ set.team_a_points }}-{{ set.team_b_points }}{% if not forloop.last %} / {% endif %}{% endfor %}
+                </div>
+                {% endif %}
+                <span class="match-status status-{{ match.status }}">{{ match.get_status_display }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% empty %}
 <div class="card">
     <div class="empty-state">
         <div class="empty-icon">
@@ -23,13 +91,9 @@
                 <rect x="14" y="14" width="7" height="7" rx="1"/>
             </svg>
         </div>
-        <div class="empty-title">Grupos em breve</div>
-        <div class="empty-desc">A classificacao dos grupos sera exibida aqui assim que os resultados forem lancados.</div>
-        <div class="mt-4 flex items-center gap-3 text-xs text-slate-500">
-            <span class="badge badge-muted">Grupo A &middot; 5 duplas</span>
-            <span class="badge badge-muted">Grupo B &middot; 5 duplas</span>
-            <span class="badge badge-muted">Grupo C &middot; 4 duplas</span>
-        </div>
+        <div class="empty-title">Nenhum grupo encontrado</div>
+        <div class="empty-desc">Execute o seed do campeonato para popular os dados.</div>
     </div>
 </div>
+{% endfor %}
 {% endblock %}
