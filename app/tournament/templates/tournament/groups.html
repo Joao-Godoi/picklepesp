@@ -36,7 +36,7 @@
                 {% for s in data.standings %}
                 <tr>
                     <td class="pos-col {% if s.position <= 3 %}pos-{{ s.position }}{% endif %}">{{ s.position }}</td>
-                    <td class="team-name">{{ s.team|team_display:is_admin }}</td>
+                    <td class="team-name">{{ s.double|team_display:is_admin }}</td>
                     <td class="num-col">{{ s.games }}</td>
                     <td class="num-col">{{ s.wins }}</td>
                     <td class="num-col">{{ s.losses }}</td>
@@ -61,16 +61,16 @@
             {% for match in data.matches %}
             <div class="match-card {{ match.status }}">
                 <div class="match-teams">
-                    <div class="match-team {% if match.status == 'finished' %}{% if match.winner_id == match.team_a_id %}winner{% else %}loser{% endif %}{% endif %}">
-                        {% if match.team_a %}{{ match.team_a|team_display:is_admin }}{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                    <div class="match-team {% if match.status == 'finished' %}{% if match.winner_id == match.double_1_id %}winner{% else %}loser{% endif %}{% endif %}">
+                        {% if match.double_1 %}{{ match.double_1|team_display:is_admin }}{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
                     </div>
-                    <div class="match-team {% if match.status == 'finished' %}{% if match.winner_id == match.team_b_id %}winner{% else %}loser{% endif %}{% endif %}">
-                        {% if match.team_b %}{{ match.team_b|team_display:is_admin }}{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                    <div class="match-team {% if match.status == 'finished' %}{% if match.winner_id == match.double_2_id %}winner{% else %}loser{% endif %}{% endif %}">
+                        {% if match.double_2 %}{{ match.double_2|team_display:is_admin }}{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
                     </div>
                 </div>
                 {% if match.status == 'finished' %}
                 <div class="match-score">
-                    {% for set in match.sets.all %}{{ set.team_a_points }}-{{ set.team_b_points }}{% if not forloop.last %} / {% endif %}{% endfor %}
+                    {% for set in match.sets.all %}{{ set.points_double_1 }}-{{ set.points_double_2 }}{% if not forloop.last %} / {% endif %}{% endfor %}
                 </div>
                 {% endif %}
                 <span class="match-status status-{{ match.status }}">{{ match.get_status_display }}</span>

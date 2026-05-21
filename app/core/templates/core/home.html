@@ -103,10 +103,10 @@
         <div class="match-card {{ match.status }}">
             <div class="match-teams">
                 <div class="match-team">
-                    {% if match.team_a %}{{ match.team_a|team_display:is_admin }}{% elif match.source_team_a %}<span class="bracket-team-tbd">{{ match.source_team_a }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
-                </div>
-                <div class="match-team">
-                    {% if match.team_b %}{{ match.team_b|team_display:is_admin }}{% elif match.source_team_b %}<span class="bracket-team-tbd">{{ match.source_team_b }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                    {% if match.double_1 %}{{ match.double_1|team_display:is_admin }}{% elif match.source_double_1_desc %}<span class="bracket-team-tbd">{{ match.source_double_1_desc }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                 </div>
+                 <div class="match-team">
+                     {% if match.double_2 %}{{ match.double_2|team_display:is_admin }}{% elif match.source_double_2_desc %}<span class="bracket-team-tbd">{{ match.source_double_2_desc }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
                 </div>
             </div>
             <span class="match-status status-{{ match.status }}">{{ match.get_status_display }}</span>
