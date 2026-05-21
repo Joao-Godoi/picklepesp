@@ -3,5 +3,5 @@ from django.urls import path
 from tournament import views
 
 urlpatterns = [
-    path('', views.placements, name='placements'),
+    path("", views.placements, name="placements"),
 ]
