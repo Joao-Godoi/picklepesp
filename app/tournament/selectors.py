@@ -51,9 +51,12 @@ def get_placements_page_data():
 
 def _organize_bracket_phases(matches):
     phase_order = [
-        Match.PHASE_PLACEMENT_9_14,
+        Match.PHASE_TWELFTH_TO_FOURTEENTH,
+        Match.PHASE_NINTH_TO_ELEVENTH,
         Match.PHASE_QUARTERFINAL,
         Match.PHASE_FIFTH_TO_EIGHTH,
+        Match.PHASE_SEVENTH_PLACE,
+        Match.PHASE_FIFTH_PLACE,
         Match.PHASE_SEMIFINAL,
         Match.PHASE_THIRD_PLACE,
         Match.PHASE_FINAL,

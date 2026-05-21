@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static team_tags %}
 
 {% block title %}PicklePesp - Playoffs{% endblock %}
 
@@ -23,7 +23,7 @@
             <div class="bracket-match-body">
                 <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.team_a_id %}winner{% elif match.team_a_id %}loser{% endif %}{% endif %}">
                     <span class="bracket-team-name">
-                        {% if match.team_a %}{{ match.team_a }}
+                        {% if match.team_a %}{{ match.team_a|team_display:is_admin }}
                         {% elif match.source_team_a %}<span class="bracket-team-tbd">{{ match.source_team_a }}</span>
                         {% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
                     </span>
@@ -37,7 +37,7 @@
                 </div>
                 <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.team_b_id %}winner{% elif match.team_b_id %}loser{% endif %}{% endif %}">
                     <span class="bracket-team-name">
-                        {% if match.team_b %}{{ match.team_b }}
+                        {% if match.team_b %}{{ match.team_b|team_display:is_admin }}
                         {% elif match.source_team_b %}<span class="bracket-team-tbd">{{ match.source_team_b }}</span>
                         {% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
                     </span>

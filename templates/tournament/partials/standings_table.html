@@ -1,6 +1,7 @@
+{% load team_tags %}
 <div class="group-section">
     <div class="group-header">
-        <span class="group-name">{{ group.name }}</span>
+        <span class="group-name">Grupo {{ group.name }}</span>
         <span class="group-badge">{{ standings|length }} duplas</span>
     </div>
     <div class="card mb-3">
@@ -20,7 +21,7 @@
                 {% for s in standings %}
                 <tr>
                     <td class="pos-col {% if s.position <= 3 %}pos-{{ s.position }}{% endif %}">{{ s.position }}</td>
-                    <td class="team-name">{{ s.team }}</td>
+                    <td class="team-name">{{ s.team|team_display:is_admin }}</td>
                     <td class="num-col">{{ s.games }}</td>
                     <td class="num-col">{{ s.wins }}</td>
                     <td class="num-col">{{ s.losses }}</td>

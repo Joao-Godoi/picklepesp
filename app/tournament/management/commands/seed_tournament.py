@@ -1,5 +1,3 @@
-from itertools import combinations
-
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
@@ -7,45 +5,80 @@ from tournament.models import Group, Team, Match
 
 BRACKET_GROUPS = {
     "A": [
-        ("Arthur", "Flavio"),
-        ("Rogerio", "Ana"),
-        ("Jonas", "Valmir"),
-        ("Tati", "Danilo"),
-        ("Crepaldi", "Angela"),
+        (1, "Arthur", "Flavio"),
+        (2, "Rogerio", "Ana"),
+        (3, "Jonas", "Valmir"),
+        (4, "Tati", "Danilo"),
+        (5, "Crepaldi", "Angela"),
     ],
     "B": [
-        ("Joao Vitor (Tati)", "Flavia"),
-        ("Fabio", "Virginia"),
-        ("Pena", "Vincent"),
-        ("Luciano", "Marie"),
-        ("Bustos", "Joao"),
+        (6, "Joao Vitor (Tati)", "Flavia"),
+        (7, "Fabio", "Virginia"),
+        (8, "Pena", "Vincent"),
+        (9, "Luciano", "Marie"),
+        (10, "Bustos", "Joao"),
     ],
     "C": [
-        ("Aoki", "Bruno"),
-        ("Pava", "Fernanda"),
-        ("Andre Hideki", "Joao Vitor (CPD)"),
-        ("Sergio", "Adriano"),
+        (11, "Aoki", "Bruno"),
+        (12, "Pava", "Fernanda"),
+        (13, "Andre Hideki", "Joao Vitor (CPD)"),
+        (14, "Sergio", "Adriano"),
+    ],
+}
+
+GROUP_MATCHES = {
+    "A": [
+        (1, 2),
+        (3, 4),
+        (5, 1),
+        (2, 3),
+        (4, 5),
+        (1, 3),
+        (2, 4),
+        (5, 3),
+        (1, 4),
+        (2, 5),
+    ],
+    "B": [
+        (6, 7),
+        (8, 9),
+        (10, 6),
+        (7, 8),
+        (9, 10),
+        (6, 8),
+        (7, 9),
+        (10, 8),
+        (6, 9),
+        (7, 10),
+    ],
+    "C": [
+        (11, 12),
+        (13, 14),
+        (11, 13),
+        (12, 14),
+        (11, 14),
+        (12, 13),
     ],
 }
 
 PLAYOFF_MATCHES = [
     {
         "match_number": 1,
-        "phase": Match.PHASE_PLACEMENT_9_14,
+        "phase": Match.PHASE_TWELFTH_TO_FOURTEENTH,
         "bracket_type": Match.BRACKET_PLACEMENT,
         "best_of": 1,
-        "source_team_a": "5o Grupo A",
-        "source_team_b": "5o Grupo B",
+        "source_team_a": "5\u00b0 Grupo A",
+        "source_team_b": "5\u00b0 Grupo B",
         "final_position_loser": 14,
         "sort_order": 1,
     },
     {
         "match_number": 2,
-        "phase": Match.PHASE_PLACEMENT_9_14,
+        "phase": Match.PHASE_TWELFTH_TO_FOURTEENTH,
         "bracket_type": Match.BRACKET_PLACEMENT,
         "best_of": 1,
         "source_team_a": "Vencedor jogo 1",
-        "source_team_b": "4o Grupo C",
+        "source_team_b": "4\u00b0 Grupo C",
         "source_match_a_number": 1,
         "source_match_a_is_winner": True,
         "final_position_loser": 13,
@@ -54,21 +87,21 @@ PLAYOFF_MATCHES = [
     },
     {
         "match_number": 3,
-        "phase": Match.PHASE_PLACEMENT_9_14,
+        "phase": Match.PHASE_NINTH_TO_ELEVENTH,
         "bracket_type": Match.BRACKET_PLACEMENT,
         "best_of": 1,
-        "source_team_a": "4o Grupo A",
-        "source_team_b": "4o Grupo B",
+        "source_team_a": "4\u00b0 Grupo A",
+        "source_team_b": "4\u00b0 Grupo B",
         "final_position_loser": 11,
         "sort_order": 3,
     },
     {
         "match_number": 4,
-        "phase": Match.PHASE_PLACEMENT_9_14,
+        "phase": Match.PHASE_NINTH_TO_ELEVENTH,
         "bracket_type": Match.BRACKET_PLACEMENT,
         "best_of": 1,
         "source_team_a": "Vencedor jogo 3",
-        "source_team_b": "3o Grupo C",
+        "source_team_b": "3\u00b0 Grupo C",
         "source_match_a_number": 3,
         "source_match_a_is_winner": True,
         "final_position_loser": 10,
@@ -80,8 +113,8 @@ PLAYOFF_MATCHES = [
         "phase": Match.PHASE_QUARTERFINAL,
         "bracket_type": Match.BRACKET_MAIN,
         "best_of": 3,
-        "source_team_a": "1o Grupo A",
-        "source_team_b": "3o Grupo B",
+        "source_team_a": "1\u00b0 Grupo A",
+        "source_team_b": "3\u00b0 Grupo B",
         "sort_order": 5,
     },
     {
@@ -89,8 +122,8 @@ PLAYOFF_MATCHES = [
         "phase": Match.PHASE_QUARTERFINAL,
         "bracket_type": Match.BRACKET_MAIN,
         "best_of": 3,
-        "source_team_a": "1o Grupo C",
-        "source_team_b": "2o Grupo A",
+        "source_team_a": "1\u00b0 Grupo C",
+        "source_team_b": "2\u00b0 Grupo A",
         "sort_order": 6,
     },
     {
@@ -98,8 +131,8 @@ PLAYOFF_MATCHES = [
         "phase": Match.PHASE_QUARTERFINAL,
         "bracket_type": Match.BRACKET_MAIN,
         "best_of": 3,
-        "source_team_a": "1o Grupo B",
-        "source_team_b": "3o Grupo A",
+        "source_team_a": "1\u00b0 Grupo B",
+        "source_team_b": "3\u00b0 Grupo A",
         "sort_order": 7,
     },
     {
@@ -107,8 +140,8 @@ PLAYOFF_MATCHES = [
         "phase": Match.PHASE_QUARTERFINAL,
         "bracket_type": Match.BRACKET_MAIN,
         "best_of": 3,
-        "source_team_a": "2o Grupo B",
-        "source_team_b": "2o Grupo C",
+        "source_team_a": "2\u00b0 Grupo B",
+        "source_team_b": "2\u00b0 Grupo C",
         "sort_order": 8,
     },
     {
@@ -139,7 +172,7 @@ PLAYOFF_MATCHES = [
     },
     {
         "match_number": 11,
-        "phase": Match.PHASE_FIFTH_TO_EIGHTH,
+        "phase": Match.PHASE_SEVENTH_PLACE,
         "bracket_type": Match.BRACKET_MAIN,
         "best_of": 3,
         "source_team_a": "Perdedor jogo 9",
@@ -154,7 +187,7 @@ PLAYOFF_MATCHES = [
     },
     {
         "match_number": 12,
-        "phase": Match.PHASE_FIFTH_TO_EIGHTH,
+        "phase": Match.PHASE_FIFTH_PLACE,
         "bracket_type": Match.BRACKET_MAIN,
         "best_of": 3,
         "source_team_a": "Vencedor jogo 9",
@@ -242,11 +275,14 @@ class Command(BaseCommand):
                 groups_created += 1
                 self.stdout.write(f"  Grupo {group.name} criado")
 
-            for p1, p2 in team_list:
+            for team_number, p1, p2 in team_list:
                 _, created = Team.objects.get_or_create(
-                    player1_name=p1,
-                    player2_name=p2,
-                    group=group,
+                    team_number=team_number,
+                    defaults={
+                        "player1_name": p1,
+                        "player2_name": p2,
+                        "group": group,
+                    },
                 )
                 if created:
                     teams_created += 1
@@ -255,13 +291,13 @@ class Command(BaseCommand):
             f"\n{groups_created} grupo(s), {teams_created} dupla(s) criada(s)"
         )
 
-        for group in Group.objects.all():
-            teams = list(group.teams.all())
+        for group_name, match_pairs in GROUP_MATCHES.items():
+            group = Group.objects.get(name=group_name)
             existing = Match.objects.filter(
                 bracket_type=Match.BRACKET_GROUP,
                 group=group,
             ).count()
-            expected = len(list(combinations(teams, 2)))
+            expected = len(match_pairs)
 
             if existing >= expected:
                 self.stdout.write(
@@ -269,26 +305,23 @@ class Command(BaseCommand):
                 )
                 continue
 
-            match_number = (
-                Match.objects.filter(
-                    bracket_type=Match.BRACKET_GROUP,
-                )
-                .order_by("-match_number")
-                .first()
-            )
-            counter = match_number.match_number + 1 if match_number else 1000
-
             sort_offset = 0
-            for group_obj in Group.objects.order_by("name"):
-                if group_obj == group:
+            for gn in ["A", "B", "C"]:
+                if gn == group_name:
                     break
-                sort_offset += len(list(combinations(list(group_obj.teams.all()), 2)))
+                sort_offset += len(GROUP_MATCHES.get(gn, []))
 
-            sort_counter = sort_offset
+            counter_base = 1000
+            for group_obj in Group.objects.order_by("name"):
+                if group_obj.name < group_name:
+                    counter_base += len(GROUP_MATCHES.get(group_obj.name, []))
 
-            for i, (team_a, team_b) in enumerate(combinations(teams, 2)):
+            for i, (tn_a, tn_b) in enumerate(match_pairs):
+                team_a = Team.objects.get(team_number=tn_a)
+                team_b = Team.objects.get(team_number=tn_b)
+                match_num = counter_base + i
                 _, created = Match.objects.get_or_create(
-                    match_number=counter + i,
+                    match_number=match_num,
                     bracket_type=Match.BRACKET_GROUP,
                     defaults={
                         "phase": Match.PHASE_GROUP,
@@ -297,7 +330,7 @@ class Command(BaseCommand):
                         "team_b": team_b,
                         "status": Match.STATUS_READY,
                         "best_of": 3,
-                        "sort_order": sort_counter + i,
+                        "sort_order": sort_offset + i,
                     },
                 )
                 if created:

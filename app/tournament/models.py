@@ -21,17 +21,23 @@ class Team(models.Model):
         related_name="teams",
         verbose_name="Grupo",
     )
+    team_number = models.PositiveIntegerField("Numero da dupla", default=0)
     player1_name = models.CharField("Jogador 1", max_length=100)
     player2_name = models.CharField("Jogador 2", max_length=100)
 
     class Meta:
         verbose_name = "Dupla"
         verbose_name_plural = "Duplas"
-        ordering = ["group", "pk"]
+        ordering = ["team_number"]
         unique_together = [["player1_name", "player2_name", "group"]]
 
     def __str__(self):
-        return f"{self.player1_name} / {self.player2_name}"
+        return f"Dupla {self.team_number}"
+
+    def display_name(self, show_names=False):
+        if show_names:
+            return f"Dupla {self.team_number} - {self.player1_name} / {self.player2_name}"
+        return f"Dupla {self.team_number}"
 
 
 class Match(models.Model):
@@ -41,16 +47,22 @@ class Match(models.Model):
     PHASE_THIRD_PLACE = "third_place"
     PHASE_FINAL = "final"
     PHASE_FIFTH_TO_EIGHTH = "fifth_to_eighth"
-    PHASE_PLACEMENT_9_14 = "placement_9_14"
+    PHASE_SEVENTH_PLACE = "seventh_place"
+    PHASE_FIFTH_PLACE = "fifth_place"
+    PHASE_TWELFTH_TO_FOURTEENTH = "twelfth_to_fourteenth"
+    PHASE_NINTH_TO_ELEVENTH = "ninth_to_eleventh"
 
     PHASE_CHOICES = [
         (PHASE_GROUP, "Fase de grupos"),
         (PHASE_QUARTERFINAL, "Quartas de final"),
         (PHASE_SEMIFINAL, "Semifinal"),
-        (PHASE_THIRD_PLACE, "Disputa de 3o lugar"),
+        (PHASE_THIRD_PLACE, "Disputa de 3\u00b0 lugar"),
         (PHASE_FINAL, "Final"),
-        (PHASE_FIFTH_TO_EIGHTH, "Disputa de 5o ao 8o"),
-        (PHASE_PLACEMENT_9_14, "Disputa de 9o ao 14o"),
+        (PHASE_FIFTH_TO_EIGHTH, "Disputa de 5\u00b0 ao 8\u00b0"),
+        (PHASE_SEVENTH_PLACE, "Disputa de 7\u00b0 e 8\u00b0"),
+        (PHASE_FIFTH_PLACE, "Disputa de 5\u00b0 e 6\u00b0"),
+        (PHASE_TWELFTH_TO_FOURTEENTH, "Disputa do 12\u00b0 ao 14\u00b0"),
+        (PHASE_NINTH_TO_ELEVENTH, "Disputa do 9\u00b0 ao 11\u00b0"),
     ]
 
     BRACKET_GROUP = "group"
@@ -77,7 +89,7 @@ class Match(models.Model):
         (STATUS_BLOCKED, "Bloqueada"),
     ]
 
-    phase = models.CharField("Fase", max_length=20, choices=PHASE_CHOICES)
+    phase = models.CharField("Fase", max_length=30, choices=PHASE_CHOICES)
     match_number = models.PositiveIntegerField("Numero do jogo")
     bracket_type = models.CharField(
         "Tipo de bracket", max_length=10, choices=BRACKET_CHOICES

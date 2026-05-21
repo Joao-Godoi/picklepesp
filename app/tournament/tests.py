@@ -18,10 +18,10 @@ class MatchSetValidationTest(TestCase):
     def setUp(self):
         self.group = Group.objects.create(name="A")
         self.team_a = Team.objects.create(
-            player1_name="Player 1", player2_name="Player 2", group=self.group
+            team_number=1, player1_name="Player 1", player2_name="Player 2", group=self.group
         )
         self.team_b = Team.objects.create(
-            player1_name="Player 3", player2_name="Player 4", group=self.group
+            team_number=2, player1_name="Player 3", player2_name="Player 4", group=self.group
         )
         self.match = Match.objects.create(
             phase=Match.PHASE_GROUP,
@@ -130,10 +130,10 @@ class MatchValidationTest(TestCase):
     def setUp(self):
         self.group = Group.objects.create(name="A")
         self.team_a = Team.objects.create(
-            player1_name="Player 1", player2_name="Player 2", group=self.group
+            team_number=1, player1_name="Player 1", player2_name="Player 2", group=self.group
         )
         self.team_b = Team.objects.create(
-            player1_name="Player 3", player2_name="Player 4", group=self.group
+            team_number=2, player1_name="Player 3", player2_name="Player 4", group=self.group
         )
 
     def test_finished_match_without_teams_raises_error(self):
@@ -166,7 +166,7 @@ class MatchValidationTest(TestCase):
 
     def test_winner_not_in_match_raises_error(self):
         team_c = Team.objects.create(
-            player1_name="Player 5", player2_name="Player 6", group=self.group
+            team_number=3, player1_name="Player 5", player2_name="Player 6", group=self.group
         )
         match = Match(
             phase=Match.PHASE_GROUP,
@@ -256,10 +256,10 @@ class DetermineWinnerTest(TestCase):
     def setUp(self):
         self.group = Group.objects.create(name="A")
         self.team_a = Team.objects.create(
-            player1_name="Player 1", player2_name="Player 2", group=self.group
+            team_number=1, player1_name="Player 1", player2_name="Player 2", group=self.group
         )
         self.team_b = Team.objects.create(
-            player1_name="Player 3", player2_name="Player 4", group=self.group
+            team_number=2, player1_name="Player 3", player2_name="Player 4", group=self.group
         )
         self.match = Match.objects.create(
             phase=Match.PHASE_GROUP,
@@ -305,7 +305,7 @@ class DetermineWinnerTest(TestCase):
 
     def test_best_of_1_winner(self):
         match = Match.objects.create(
-            phase=Match.PHASE_PLACEMENT_9_14,
+            phase=Match.PHASE_TWELFTH_TO_FOURTEENTH,
             match_number=1,
             bracket_type=Match.BRACKET_PLACEMENT,
             team_a=self.team_a,
@@ -321,7 +321,7 @@ class DetermineWinnerTest(TestCase):
 
     def test_best_of_1_loser(self):
         match = Match.objects.create(
-            phase=Match.PHASE_PLACEMENT_9_14,
+            phase=Match.PHASE_TWELFTH_TO_FOURTEENTH,
             match_number=1,
             bracket_type=Match.BRACKET_PLACEMENT,
             team_a=self.team_a,
@@ -340,10 +340,10 @@ class ValidateMatchSetsTest(TestCase):
     def setUp(self):
         self.group = Group.objects.create(name="A")
         self.team_a = Team.objects.create(
-            player1_name="Player 1", player2_name="Player 2", group=self.group
+            team_number=1, player1_name="Player 1", player2_name="Player 2", group=self.group
         )
         self.team_b = Team.objects.create(
-            player1_name="Player 3", player2_name="Player 4", group=self.group
+            team_number=2, player1_name="Player 3", player2_name="Player 4", group=self.group
         )
 
     def test_valid_finished_match_no_errors(self):
@@ -453,10 +453,10 @@ class FinalizeMatchTest(TestCase):
     def setUp(self):
         self.group = Group.objects.create(name="A")
         self.team_a = Team.objects.create(
-            player1_name="Player 1", player2_name="Player 2", group=self.group
+            team_number=1, player1_name="Player 1", player2_name="Player 2", group=self.group
         )
         self.team_b = Team.objects.create(
-            player1_name="Player 3", player2_name="Player 4", group=self.group
+            team_number=2, player1_name="Player 3", player2_name="Player 4", group=self.group
         )
 
     def test_finalize_valid_match(self):
@@ -517,7 +517,7 @@ class FinalizeMatchTest(TestCase):
 
     def test_finalize_best_of_1_match(self):
         match = Match.objects.create(
-            phase=Match.PHASE_PLACEMENT_9_14,
+            phase=Match.PHASE_TWELFTH_TO_FOURTEENTH,
             match_number=1,
             bracket_type=Match.BRACKET_PLACEMENT,
             team_a=self.team_a,
@@ -540,13 +540,13 @@ class GroupStandingsTest(TestCase):
     def setUp(self):
         self.group = Group.objects.create(name="A")
         self.team_a = Team.objects.create(
-            player1_name="Arthur", player2_name="Flavio", group=self.group
+            team_number=1, player1_name="Arthur", player2_name="Flavio", group=self.group
         )
         self.team_b = Team.objects.create(
-            player1_name="Rogerio", player2_name="Ana", group=self.group
+            team_number=2, player1_name="Rogerio", player2_name="Ana", group=self.group
         )
         self.team_c = Team.objects.create(
-            player1_name="Jonas", player2_name="Valmir", group=self.group
+            team_number=3, player1_name="Jonas", player2_name="Valmir", group=self.group
         )
 
     def _create_finished_match(self, team_a, team_b, sets_data):
@@ -711,6 +711,7 @@ class GroupStandingsTest(TestCase):
         for i in range(5):
             teams.append(
                 Team.objects.create(
+                    team_number=100 + i,
                     player1_name=f"P{i*2+1}",
                     player2_name=f"P{i*2+2}",
                     group=group,
@@ -719,7 +720,7 @@ class GroupStandingsTest(TestCase):
 
         counter = 2000
         for i, ta in enumerate(teams):
-            for tb in teams[i + 1 :]:
+            for tb in teams[i + 1:]:
                 Match.objects.create(
                     phase=Match.PHASE_GROUP,
                     match_number=counter,
@@ -745,16 +746,16 @@ class PropagationTest(TestCase):
     def setUp(self):
         self.group = Group.objects.create(name="A")
         self.team_a = Team.objects.create(
-            player1_name="P1", player2_name="P2", group=self.group
+            team_number=1, player1_name="P1", player2_name="P2", group=self.group
         )
         self.team_b = Team.objects.create(
-            player1_name="P3", player2_name="P4", group=self.group
+            team_number=2, player1_name="P3", player2_name="P4", group=self.group
         )
         self.team_c = Team.objects.create(
-            player1_name="P5", player2_name="P6", group=self.group
+            team_number=3, player1_name="P5", player2_name="P6", group=self.group
         )
         self.team_d = Team.objects.create(
-            player1_name="P7", player2_name="P8", group=self.group
+            team_number=4, player1_name="P7", player2_name="P8", group=self.group
         )
 
     def test_winner_propagates_to_dependent_match(self):
@@ -897,12 +898,24 @@ class PublicViewsTest(TestCase):
         response = c.get("/placements/")
         self.assertEqual(response.status_code, 200)
 
-    def test_groups_page_contains_group_data(self):
+    def test_groups_page_shows_team_numbers(self):
         c = Client()
         response = c.get("/groups/")
+        self.assertContains(response, "Dupla 1")
+        self.assertContains(response, "Dupla 11")
+        self.assertContains(response, "Dupla 8")
+
+    def test_groups_page_hides_names_for_public(self):
+        c = Client()
+        response = c.get("/groups/")
+        self.assertNotContains(response, "Arthur / Flavio")
+
+    def test_groups_page_shows_names_for_admin(self):
+        User.objects.create_superuser("admin", "admin@test.com", "pass123")
+        c = Client()
+        c.login(username="admin", password="pass123")
+        response = c.get("/groups/")
         self.assertContains(response, "Arthur / Flavio")
-        self.assertContains(response, "Aoki / Bruno")
-        self.assertContains(response, "Pena / Vincent")
 
 
 class AdminAccessTest(TestCase):

@@ -17,4 +17,4 @@ RUN cd app && python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "cd app && python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:8000"]
+CMD ["sh", "-c", "cd app && python manage.py migrate && python manage.py seed_tournament && python manage.py create_admin && gunicorn config.wsgi:application --bind 0.0.0.0:8000"]

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static team_tags %}
 
 {% block title %}PicklePesp - Campeonato Interno de Pickleball{% endblock %}
 
@@ -79,7 +79,7 @@
         </div>
         <div class="nav-card-content">
             <div class="nav-card-title">Posicoes</div>
-            <div class="nav-card-desc">Disputa do 9o ao 14o lugar</div>
+            <div class="nav-card-desc">Disputa do 9&#176; ao 14&#176; lugar</div>
         </div>
         <div class="nav-card-arrow">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -103,10 +103,10 @@
         <div class="match-card {{ match.status }}">
             <div class="match-teams">
                 <div class="match-team">
-                    {% if match.team_a %}{{ match.team_a }}{% elif match.source_team_a %}<span class="bracket-team-tbd">{{ match.source_team_a }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                    {% if match.team_a %}{{ match.team_a|team_display:is_admin }}{% elif match.source_team_a %}<span class="bracket-team-tbd">{{ match.source_team_a }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
                 </div>
                 <div class="match-team">
-                    {% if match.team_b %}{{ match.team_b }}{% elif match.source_team_b %}<span class="bracket-team-tbd">{{ match.source_team_b }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                    {% if match.team_b %}{{ match.team_b|team_display:is_admin }}{% elif match.source_team_b %}<span class="bracket-team-tbd">{{ match.source_team_b }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
                 </div>
             </div>
             <span class="match-status status-{{ match.status }}">{{ match.get_status_display }}</span>
@@ -168,11 +168,11 @@
         <div class="info-grid" style="grid-template-columns: 1fr;">
             <div class="info-item">
                 <span class="info-label">Criterios de desempate</span>
-                <span class="info-value">1o Vitorias &middot; 2o Saldo de sets &middot; 3o Saldo de pontos</span>
+                <span class="info-value">1&#176; Vitorias &middot; 2&#176; Saldo de sets &middot; 3&#176; Saldo de pontos</span>
             </div>
             <div class="info-item">
                 <span class="info-label">Classificados</span>
-                <span class="info-value">3o A + 3o B + 2o C</span>
+                <span class="info-value">3&#176; A + 3&#176; B + 2&#176; C</span>
             </div>
         </div>
     </div>

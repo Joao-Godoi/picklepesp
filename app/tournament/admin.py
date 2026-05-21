@@ -26,7 +26,7 @@ class MatchSetInline(admin.TabularInline):
 class TeamInline(admin.TabularInline):
     model = Team
     extra = 0
-    fields = ["player1_name", "player2_name"]
+    fields = ["team_number", "player1_name", "player2_name"]
     verbose_name = "Dupla"
     verbose_name_plural = "Duplas"
 
@@ -40,10 +40,11 @@ class GroupAdmin(admin.ModelAdmin):
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ["__str__", "group"]
+    list_display = ["team_number", "__str__", "player1_name", "player2_name", "group"]
     list_filter = ["group"]
-    search_fields = ["player1_name", "player2_name"]
+    search_fields = ["player1_name", "player2_name", "team_number"]
     list_select_related = ["group"]
+    ordering = ["team_number"]
 
 
 @admin.register(Match)

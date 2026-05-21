@@ -1,3 +1,4 @@
+{% load team_tags %}
 {% for phase_data in phases %}
 <div class="bracket-phase">
     <div class="bracket-phase-title">{{ phase_data.label }}</div>
@@ -8,7 +9,7 @@
             <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.team_a_id %}winner{% elif match.team_a_id %}loser{% endif %}{% endif %}">
                 <span class="bracket-team-name">
                     {% if match.team_a %}
-                        {{ match.team_a }}
+                        {{ match.team_a|team_display:is_admin }}
                     {% elif match.source_team_a %}
                         <span class="bracket-team-tbd">{{ match.source_team_a }}</span>
                     {% else %}
@@ -26,7 +27,7 @@
             <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.team_b_id %}winner{% elif match.team_b_id %}loser{% endif %}{% endif %}">
                 <span class="bracket-team-name">
                     {% if match.team_b %}
-                        {{ match.team_b }}
+                        {{ match.team_b|team_display:is_admin }}
                     {% elif match.source_team_b %}
                         <span class="bracket-team-tbd">{{ match.source_team_b }}</span>
                     {% else %}
