@@ -1,6 +1,8 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.core.exceptions import ValidationError
 
 from tournament.models import Group, Team, Match, MatchSet
+from tournament.services import determine_match_winner, validate_match_sets
 
 admin.site.site_header = "PicklePesp - Administracao"
 admin.site.site_title = "PicklePesp Admin"
@@ -67,6 +69,7 @@ class MatchAdmin(admin.ModelAdmin):
     ]
     list_select_related = ["team_a", "team_b", "winner", "group"]
     inlines = [MatchSetInline]
+    readonly_fields = ["winner"]
     fieldsets = (
         (
             "Identificacao",
@@ -85,7 +88,16 @@ class MatchAdmin(admin.ModelAdmin):
         (
             "Times",
             {
-                "fields": ("team_a", "team_b", "source_team_a", "source_team_b"),
+                "fields": (
+                    "team_a",
+                    "team_b",
+                    "source_match_a",
+                    "source_match_a_is_winner",
+                    "source_match_b",
+                    "source_match_b_is_winner",
+                    "source_team_a",
+                    "source_team_b",
+                ),
             },
         ),
         (
@@ -101,3 +113,41 @@ class MatchAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+
+        obj = form.instance
+        obj.refresh_from_db()
+
+        if obj.status == Match.STATUS_FINISHED:
+            errors = validate_match_sets(obj)
+            if errors:
+                for error in errors:
+                    messages.error(request, error)
+                obj.status = Match.STATUS_IN_PROGRESS
+                Match.objects.filter(pk=obj.pk).update(
+                    status=Match.STATUS_IN_PROGRESS
+                )
+                return
+
+            winner = determine_match_winner(obj)
+            if winner:
+                Match.objects.filter(pk=obj.pk).update(winner=winner)
+                messages.success(
+                    request, f"Vencedor definido automaticamente: {winner}"
+                )
+            else:
+                messages.warning(
+                    request,
+                    "Nao foi possivel determinar o vencedor a partir dos sets.",
+                )
+                obj.status = Match.STATUS_IN_PROGRESS
+                Match.objects.filter(pk=obj.pk).update(
+                    status=Match.STATUS_IN_PROGRESS
+                )
+        elif obj.team_a_id and obj.team_b_id and obj.status in (
+            Match.STATUS_PENDING,
+            Match.STATUS_BLOCKED,
+        ):
+            Match.objects.filter(pk=obj.pk).update(status=Match.STATUS_READY)
