@@ -14,7 +14,7 @@
     <p class="section-title">
         {% if match_obj.phase == 'grupo' %}Grupo{% elif match_obj.phase == 'semifinal' %}Playoffs{% elif match_obj.phase == 'final' %}Playoffs{% else %}Disputa{% endif %}
     </p>
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;">
+    <div class="match-detail-header-row">
         <h1 class="page-title" style="flex:1;">
             {% if match_obj.phase == 'grupo' %}Grupo {{ match_obj.group.name }}{% else %}Jogo {{ match_obj.match_number }}{% endif %}
         </h1>
@@ -71,9 +71,9 @@
             <line x1="3" y1="12" x2="3.01" y2="12"/>
             <line x1="3" y1="18" x2="3.01" y2="18"/>
         </svg>
-        <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Sets</span>
+        <span class="card-header-label">Sets</span>
     </div>
-    <div class="card-body" style="padding:0;">
+    <div class="card-body-flush">
         <table class="sets-table">
             <thead>
                 <tr>
@@ -108,7 +108,7 @@
             <line x1="12" y1="16" x2="12" y2="12"/>
             <line x1="12" y1="8" x2="12.01" y2="8"/>
         </svg>
-        <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Informacoes</span>
+        <span class="card-header-label">Informacoes</span>
     </div>
     <div class="card-body">
         <div class="info-grid" style="grid-template-columns: 1fr 1fr;">

@@ -19,12 +19,12 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
         </svg>
-        <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Progresso</span>
+        <span class="card-header-label">Progresso</span>
         <span class="badge badge-green">{{ finished_count }}/{{ total_count }} partidas</span>
     </div>
-    <div class="card-body" style="padding:0.625rem 1rem;">
-        <div style="background:var(--bg-primary);border-radius:6px;height:6px;overflow:hidden;">
-            <div style="background:var(--accent);height:100%;border-radius:6px;width:{% widthratio finished_count total_count 100 %}%;transition:width 0.3s ease;"></div>
+    <div class="card-body-compact">
+        <div class="progress-bar">
+            <div class="progress-bar-fill" style="width:{% widthratio finished_count total_count 100 %}%;"></div>
         </div>
     </div>
 </div>
@@ -52,18 +52,19 @@
                         <path d="M18 20V4"/>
                         <path d="M6 20v-4"/>
                     </svg>
-                    <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Classificacao</span>
+                    <span class="card-header-label">Classificacao</span>
                 </div>
+                <div style="overflow-x:auto;">
                 <table class="standings-table">
                     <thead>
                         <tr>
                             <th class="pos-col">#</th>
                             <th>Dupla</th>
-                            <th class="num-col">J</th>
-                            <th class="num-col">V</th>
-                            <th class="num-col">D</th>
-                            <th class="num-col">SS</th>
-                            <th class="num-col">SP</th>
+                            <th class="num-col"><abbr title="Jogos">J</abbr></th>
+                            <th class="num-col"><abbr title="Vitorias">V</abbr></th>
+                            <th class="num-col"><abbr title="Derrotas">D</abbr></th>
+                            <th class="num-col"><abbr title="Saldo de Sets">SS</abbr></th>
+                            <th class="num-col"><abbr title="Saldo de Pontos">SP</abbr></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,6 +81,14 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                </div>
+                <div class="standings-legend">
+                    <span class="ranking-legend-item"><abbr title="Jogos">J</abbr> = Jogos</span>
+                    <span class="ranking-legend-item"><abbr title="Vitorias">V</abbr> = Vitorias</span>
+                    <span class="ranking-legend-item"><abbr title="Derrotas">D</abbr> = Derrotas</span>
+                    <span class="ranking-legend-item"><abbr title="Saldo de Sets">SS</abbr> = Saldo de Sets</span>
+                    <span class="ranking-legend-item"><abbr title="Saldo de Pontos">SP</abbr> = Saldo de Pontos</span>
+                </div>
             </div>
 
             {% if data.matches %}
@@ -89,9 +98,9 @@
                         <rect x="3" y="3" width="18" height="18" rx="2"/>
                         <line x1="3" y1="9" x2="21" y2="9"/>
                     </svg>
-                    <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Partidas</span>
+                    <span class="card-header-label">Partidas</span>
                 </div>
-                <div class="card-body" style="padding:0;">
+                <div class="card-body-flush">
                     {% for match in data.matches %}
                     <a href="{% url 'match_detail' match.match_number %}" class="match-card-link">
                         <div class="bracket-match {{ match.status }}">

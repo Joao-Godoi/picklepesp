@@ -20,7 +20,7 @@
             <line x1="12" y1="20" x2="12" y2="4"/>
             <line x1="6" y1="20" x2="6" y2="14"/>
         </svg>
-        <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Classificacao Geral</span>
+        <span class="card-header-label">Classificacao Geral</span>
     </div>
     <div style="overflow-x:auto;">
         <table class="standings-table">
@@ -29,11 +29,11 @@
                     <th class="pos-col">#</th>
                     <th>Dupla</th>
                     <th>Grupo</th>
-                    <th class="num-col">J</th>
-                    <th class="num-col">V</th>
-                    <th class="num-col">D</th>
-                    <th class="num-col">SS</th>
-                    <th class="num-col">SP</th>
+                    <th class="num-col"><abbr title="Jogos">J</abbr></th>
+                    <th class="num-col"><abbr title="Vitorias">V</abbr></th>
+                    <th class="num-col"><abbr title="Derrotas">D</abbr></th>
+                    <th class="num-col"><abbr title="Saldo de Sets">SS</abbr></th>
+                    <th class="num-col"><abbr title="Saldo de Pontos">SP</abbr></th>
                 </tr>
             </thead>
             <tbody>
@@ -41,7 +41,7 @@
                 <tr class="{% if s.qualified %}qualified-row{% elif s.wins == 0 and s.games > 0 %}eliminated-row{% endif %}">
                     <td class="pos-col {% if s.overall_position <= 3 %}pos-{{ s.overall_position }}{% endif %}">{{ s.overall_position }}</td>
                     <td class="team-name">{{ s.double.name }}</td>
-                    <td style="font-size:0.6875rem;color:var(--text-muted);">{{ s.group.name }}</td>
+                    <td class="ranking-table-group">{{ s.group.name }}</td>
                     <td class="num-col">{{ s.games }}</td>
                     <td class="num-col">{{ s.wins }}</td>
                     <td class="num-col">{{ s.losses }}</td>
@@ -54,26 +54,36 @@
     </div>
 </div>
 
-<div style="margin-top:1rem;">
+<div class="mt-4">
+    <div class="standings-legend">
+        <span class="ranking-legend-item"><abbr title="Jogos">J</abbr> = Jogos</span>
+        <span class="ranking-legend-item"><abbr title="Vitorias">V</abbr> = Vitorias</span>
+        <span class="ranking-legend-item"><abbr title="Derrotas">D</abbr> = Derrotas</span>
+        <span class="ranking-legend-item"><abbr title="Saldo de Sets">SS</abbr> = Saldo de Sets</span>
+        <span class="ranking-legend-item"><abbr title="Saldo de Pontos">SP</abbr> = Saldo de Pontos</span>
+    </div>
+</div>
+
+<div style="margin-top:0.75rem;">
     <div class="ranking-legend">
         <span class="ranking-legend-item">
-            <span class="ranking-legend-dot" style="background:var(--accent-bg);border:1px solid var(--accent);"></span>
+            <span class="ranking-legend-dot ranking-legend-dot-qualified"></span>
             Classificado para playoffs
         </span>
         <span class="ranking-legend-item">
-            <span class="ranking-legend-dot" style="background:rgba(239, 68, 68, 0.1);border:1px solid #ef4444;"></span>
+            <span class="ranking-legend-dot ranking-legend-dot-eliminated"></span>
             Eliminado
         </span>
         <span class="ranking-legend-item">
-            <span class="ranking-legend-dot" style="background:var(--gold);"></span>
+            <span class="ranking-legend-dot ranking-legend-dot-gold"></span>
             1&#176;
         </span>
         <span class="ranking-legend-item">
-            <span class="ranking-legend-dot" style="background:var(--silver);"></span>
+            <span class="ranking-legend-dot ranking-legend-dot-silver"></span>
             2&#176;
         </span>
         <span class="ranking-legend-item">
-            <span class="ranking-legend-dot" style="background:var(--bronze);"></span>
+            <span class="ranking-legend-dot ranking-legend-dot-bronze"></span>
             3&#176;
         </span>
     </div>

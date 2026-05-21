@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="mb-5">
-    <a href="{% url 'admin_dashboard' %}" class="back-link" style="margin-bottom:0.5rem;">
+    <a href="{% url 'admin_dashboard' %}" class="back-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 18 9 12 15 6"/>
         </svg>
@@ -55,7 +55,7 @@
                 <line x1="3" y1="12" x2="3.01" y2="12"/>
                 <line x1="3" y1="18" x2="3.01" y2="18"/>
             </svg>
-            <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Sets</span>
+            <span class="card-header-label">Sets</span>
             <span class="badge badge-green" style="margin-left:auto;">Melhor de {{ edit_match.best_of }}</span>
         </div>
         <div class="card-body">

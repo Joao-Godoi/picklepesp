@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 {% if match.final_position_loser %}
-                <div style="display:flex;flex-direction:column;justify-content:center;padding:0 0.5rem;font-size:0.5625rem;color:var(--text-muted);">
+                <div class="bracket-positions">
                     {% if match.final_position_winner and match.status == 'finished' %}
                     <span>{{ match.final_position_winner }}&#176;</span>
                     {% endif %}
