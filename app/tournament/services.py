@@ -1,7 +1,9 @@
+import re
+
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
-from tournament.models import Match
+from tournament.models import Group, Match
 
 
 def determine_match_winner(match):
@@ -153,6 +155,54 @@ def _update_dependent_status(match):
     match.save(update_fields=["team_a", "team_b", "status", "updated_at"])
 
 
+_POSITION_RE = re.compile(r"^(\d+).+\s+Grupo\s+([A-C])$", re.UNICODE)
+
+
+def _resolve_position_team(source_str, standings_map):
+    if not source_str:
+        return None
+    m = _POSITION_RE.match(source_str.strip())
+    if not m:
+        return None
+    position = int(m.group(1))
+    group_name = m.group(2)
+    group_standings = standings_map.get(group_name, [])
+    for entry in group_standings:
+        if entry["position"] == position:
+            return entry["team"]
+    return None
+
+
+def resolve_group_positions():
+    standings_map = {}
+    for group in Group.objects.all():
+        standings_map[group.name] = compute_group_standings(group)
+
+    updated = 0
+    for match in Match.objects.exclude(bracket_type=Match.BRACKET_GROUP).filter(
+        status__in=[Match.STATUS_BLOCKED, Match.STATUS_PENDING, Match.STATUS_READY]
+    ):
+        changed = False
+
+        if not match.team_a_id and match.source_team_a:
+            team = _resolve_position_team(match.source_team_a, standings_map)
+            if team:
+                match.team_a = team
+                changed = True
+
+        if not match.team_b_id and match.source_team_b:
+            team = _resolve_position_team(match.source_team_b, standings_map)
+            if team:
+                match.team_b = team
+                changed = True
+
+        if changed:
+            _update_dependent_status(match)
+            updated += 1
+
+    return updated
+
+
 def recalculate_tournament():
     with transaction.atomic():
         for match in Match.objects.filter(status=Match.STATUS_FINISHED).order_by(
@@ -163,6 +213,8 @@ def recalculate_tournament():
                 match.winner = winner
                 match.save(update_fields=["winner", "updated_at"])
             propagate_match_result(match)
+
+        resolve_group_positions()
 
         for match in Match.objects.exclude(status=Match.STATUS_FINISHED).order_by(
             "sort_order", "match_number"

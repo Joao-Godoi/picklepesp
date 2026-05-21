@@ -2,7 +2,13 @@ from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
 
 from tournament.models import Group, Team, Match, MatchSet
-from tournament.services import determine_match_winner, validate_match_sets, propagate_match_result
+from tournament.services import (
+    determine_match_winner,
+    validate_match_sets,
+    propagate_match_result,
+    recalculate_tournament,
+    resolve_group_positions,
+)
 
 admin.site.site_header = "PicklePesp - Administracao"
 admin.site.site_title = "PicklePesp Admin"
@@ -136,7 +142,6 @@ class MatchAdmin(admin.ModelAdmin):
             if winner:
                 Match.objects.filter(pk=obj.pk).update(winner=winner)
                 obj.refresh_from_db()
-                propagate_match_result(obj)
                 messages.success(
                     request, f"Vencedor definido automaticamente: {winner}"
                 )
@@ -154,3 +159,9 @@ class MatchAdmin(admin.ModelAdmin):
             Match.STATUS_BLOCKED,
         ):
             Match.objects.filter(pk=obj.pk).update(status=Match.STATUS_READY)
+
+        try:
+            recalculate_tournament()
+            messages.info(request, "Classificacao e confrontos recalculados automaticamente.")
+        except Exception as e:
+            messages.error(request, f"Erro ao recalcular: {e}")
