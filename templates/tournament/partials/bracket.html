@@ -1,0 +1,48 @@
+{% for phase_data in phases %}
+<div class="bracket-phase">
+    <div class="bracket-phase-title">{{ phase_data.label }}</div>
+    {% for match in phase_data.matches %}
+    <div class="bracket-match {{ match.status }}">
+        <div class="bracket-match-number">J{{ match.match_number }}</div>
+        <div class="bracket-match-body">
+            <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.team_a_id %}winner{% elif match.team_a_id %}loser{% endif %}{% endif %}">
+                <span class="bracket-team-name">
+                    {% if match.team_a %}
+                        {{ match.team_a }}
+                    {% elif match.source_team_a %}
+                        <span class="bracket-team-tbd">{{ match.source_team_a }}</span>
+                    {% else %}
+                        <span class="bracket-team-tbd">A definir</span>
+                    {% endif %}
+                </span>
+                {% if match.status == 'finished' %}
+                <div class="bracket-team-scores">
+                    {% for set in match.sets.all %}
+                    <span class="bracket-set-score {% if set.team_a_points > set.team_b_points %}won{% endif %}">{{ set.team_a_points }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.team_b_id %}winner{% elif match.team_b_id %}loser{% endif %}{% endif %}">
+                <span class="bracket-team-name">
+                    {% if match.team_b %}
+                        {{ match.team_b }}
+                    {% elif match.source_team_b %}
+                        <span class="bracket-team-tbd">{{ match.source_team_b }}</span>
+                    {% else %}
+                        <span class="bracket-team-tbd">A definir</span>
+                    {% endif %}
+                </span>
+                {% if match.status == 'finished' %}
+                <div class="bracket-team-scores">
+                    {% for set in match.sets.all %}
+                    <span class="bracket-set-score {% if set.team_b_points > set.team_a_points %}won{% endif %}">{{ set.team_b_points }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}

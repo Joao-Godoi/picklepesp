@@ -1,0 +1,28 @@
+<div class="match-card {{ match.status }}">
+    <div class="match-teams">
+        <div class="match-team {% if match.status == 'finished' %}{% if match.winner_id == match.team_a_id %}winner{% else %}loser{% endif %}{% endif %}">
+            {% if match.team_a %}
+                {{ match.team_a }}
+            {% elif match.source_team_a %}
+                <span class="bracket-team-tbd">{{ match.source_team_a }}</span>
+            {% else %}
+                <span class="bracket-team-tbd">A definir</span>
+            {% endif %}
+        </div>
+        <div class="match-team {% if match.status == 'finished' %}{% if match.winner_id == match.team_b_id %}winner{% else %}loser{% endif %}{% endif %}">
+            {% if match.team_b %}
+                {{ match.team_b }}
+            {% elif match.source_team_b %}
+                <span class="bracket-team-tbd">{{ match.source_team_b }}</span>
+            {% else %}
+                <span class="bracket-team-tbd">A definir</span>
+            {% endif %}
+        </div>
+    </div>
+    {% if match.status == 'finished' %}
+    <div class="match-score">
+        {% for set in match.sets.all %}{{ set.team_a_points }}-{{ set.team_b_points }}{% if not forloop.last %} / {% endif %}{% endfor %}
+    </div>
+    {% endif %}
+    <span class="match-status status-{{ match.status }}">{{ match.get_status_display }}</span>
+</div>
