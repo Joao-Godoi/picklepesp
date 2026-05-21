@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}PicklePesp - Classificacao Geral{% endblock %}
+
+{% block nav-rankings-active %}active-nav{% endblock %}
+{% block nav-rankings-bar %}active{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <p class="section-title">Classificacao Geral</p>
+    <h1 class="page-title">Ranking das Duplas</h1>
+    <p class="page-subtitle">Posicao de todas as duplas no campeonato</p>
+</div>
+
+<div class="card">
+    <div class="card-header standings-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Classificacao Geral</span>
+    </div>
+    <div style="overflow-x:auto;">
+        <table class="standings-table">
+            <thead>
+                <tr>
+                    <th class="pos-col">#</th>
+                    <th>Dupla</th>
+                    <th>Grupo</th>
+                    <th class="num-col">J</th>
+                    <th class="num-col">V</th>
+                    <th class="num-col">D</th>
+                    <th class="num-col">SS</th>
+                    <th class="num-col">SP</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in standings %}
+                <tr class="{% if s.qualified %}qualified-row{% elif s.wins == 0 and s.games > 0 %}eliminated-row{% endif %}">
+                    <td class="pos-col {% if s.overall_position <= 3 %}pos-{{ s.overall_position }}{% endif %}">{{ s.overall_position }}</td>
+                    <td class="team-name">{{ s.double.name }}</td>
+                    <td style="font-size:0.6875rem;color:var(--text-muted);">{{ s.group.name }}</td>
+                    <td class="num-col">{{ s.games }}</td>
+                    <td class="num-col">{{ s.wins }}</td>
+                    <td class="num-col">{{ s.losses }}</td>
+                    <td class="num-col">{{ s.sets_balance }}</td>
+                    <td class="num-col">{{ s.points_balance }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div style="margin-top:1rem;">
+    <div class="ranking-legend">
+        <span class="ranking-legend-item">
+            <span class="ranking-legend-dot" style="background:var(--accent-bg);border:1px solid var(--accent);"></span>
+            Classificado para playoffs
+        </span>
+        <span class="ranking-legend-item">
+            <span class="ranking-legend-dot" style="background:rgba(239, 68, 68, 0.1);border:1px solid #ef4444;"></span>
+            Eliminado
+        </span>
+        <span class="ranking-legend-item">
+            <span class="ranking-legend-dot" style="background:var(--gold);"></span>
+            1&#176;
+        </span>
+        <span class="ranking-legend-item">
+            <span class="ranking-legend-dot" style="background:var(--silver);"></span>
+            2&#176;
+        </span>
+        <span class="ranking-legend-item">
+            <span class="ranking-legend-dot" style="background:var(--bronze);"></span>
+            3&#176;
+        </span>
+    </div>
+</div>
+{% endblock %}

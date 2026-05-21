@@ -1,0 +1,23 @@
+{% extends "admin/index.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="module" style="margin-bottom: 20px;">
+    <table style="width: 100%;">
+        <caption style="text-align: left; padding: 8px; font-size: 13px; font-weight: bold; background: var(--primary, #417690); color: white;">
+            Painel de Gerenciamento
+        </caption>
+        <tbody>
+            <tr>
+                <th scope="row">
+                    <a href="/painel/" style="display: block; padding: 8px 12px; font-size: 14px;">
+                        🏓 Gerenciar Partidas
+                    </a>
+                </th>
+                <td>&nbsp;</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{{ block.super }}
+{% endblock %}

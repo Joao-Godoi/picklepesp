@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}PicklePesp - Admin - Jogo {{ edit_match.match_number }}{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <a href="{% url 'admin_dashboard' %}" class="back-link" style="margin-bottom:0.5rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Voltar
+    </a>
+    <p class="section-title">Editar Partida</p>
+    <h1 class="page-title">Jogo {{ edit_match.match_number }}</h1>
+    <p class="page-subtitle">{{ edit_match.get_phase_display }}</p>
+</div>
+
+<div class="match-detail-card">
+    <div class="match-detail-header">
+        <span class="badge status-{{ edit_match.status }}">
+            {% if edit_match.status == 'finished' %}Finalizada{% elif edit_match.status == 'in_progress' %}Em andamento{% else %}Pendente{% endif %}
+        </span>
+    </div>
+    <div class="match-detail-teams">
+        <div class="match-detail-team">
+            <span class="match-detail-team-name">
+                {% if edit_match.double_1 %}{{ edit_match.double_1.name }}{% elif edit_match.source_double_1_desc %}{{ edit_match.source_double_1_desc }}{% else %}A definir{% endif %}
+            </span>
+        </div>
+        <div class="match-detail-vs">VS</div>
+        <div class="match-detail-team">
+            <span class="match-detail-team-name">
+                {% if edit_match.double_2 %}{{ edit_match.double_2.name }}{% elif edit_match.source_double_2_desc %}{{ edit_match.source_double_2_desc }}{% else %}A definir{% endif %}
+            </span>
+        </div>
+    </div>
+</div>
+
+{% if messages %}
+{% for message in messages %}
+<div class="admin-toast admin-toast-success">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+<form method="post" action="{% url 'admin_match_edit' edit_match.match_number %}">
+    {% csrf_token %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6"/>
+                <line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/>
+                <line x1="3" y1="6" x2="3.01" y2="6"/>
+                <line x1="3" y1="12" x2="3.01" y2="12"/>
+                <line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+            <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Sets</span>
+            <span class="badge badge-green" style="margin-left:auto;">Melhor de {{ edit_match.best_of }}</span>
+        </div>
+        <div class="card-body">
+            {% for set in sets %}
+            <div class="admin-set-row">
+                <span class="admin-set-label">Set {{ set.set_number }}</span>
+                <div class="admin-set-inputs">
+                    <div class="admin-input-group">
+                        <label class="admin-input-label">D1</label>
+                        <input type="number" name="set_{{ set.set_number }}_p1" value="{{ set.points_double_1 }}" min="0" max="99" class="admin-input">
+                    </div>
+                    <span class="admin-set-x">x</span>
+                    <div class="admin-input-group">
+                        <label class="admin-input-label">D2</label>
+                        <input type="number" name="set_{{ set.set_number }}_p2" value="{{ set.points_double_2 }}" min="0" max="99" class="admin-input">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <button type="submit" class="admin-submit">Salvar Sets</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

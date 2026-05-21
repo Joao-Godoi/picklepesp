@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load static team_tags %}
+
+{% block title %}PicklePesp - Informacoes{% endblock %}
+
+{% block nav-info-active %}active-nav{% endblock %}
+{% block nav-info-bar %}active{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <p class="section-title">Informacoes</p>
+    <h1 class="page-title">Campeonato Interno</h1>
+    <p class="page-subtitle">Formato, regras e proximos jogos</p>
+</div>
+
+<div class="card mb-5">
+    <div class="card-header">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Formato do Campeonato</span>
+    </div>
+    <div class="card-body">
+        <div class="info-section">
+            <h3 class="info-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+                Fase de Grupos
+            </h3>
+            <p class="info-text">14 duplas divididas em 3 grupos. Cada dupla enfrenta todas as outras do seu grupo.</p>
+            <div class="info-grid mb-3">
+                <div class="info-item">
+                    <span class="info-label">Grupo A</span>
+                    <span class="info-value">5 duplas &middot; 3 classificados</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Grupo B</span>
+                    <span class="info-value">5 duplas &middot; 3 classificados</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Grupo C</span>
+                    <span class="info-value">4 duplas &middot; 2 classificados</span>
+                </div>
+            </div>
+            <p class="info-text info-text-muted">Total: 8 duplas avancam para os playoffs.</p>
+        </div>
+
+        <div class="info-divider"></div>
+
+        <div class="info-section">
+            <h3 class="info-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="8 6 2 12 8 18"/>
+                    <polyline points="16 6 22 12 16 18"/>
+                </svg>
+                Playoffs (Mata-Mata)
+            </h3>
+            <p class="info-text">8 duplas eliminam-se em partidas de melhor de 3 sets.</p>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Quartas de Final</span>
+                    <span class="info-value">4 jogos</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Semifinal</span>
+                    <span class="info-value">2 jogos</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Final</span>
+                    <span class="info-value">1 jogo</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Formato</span>
+                    <span class="info-value">Melhor de 3 sets</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-divider"></div>
+
+        <div class="info-section">
+            <h3 class="info-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20V10"/>
+                    <path d="M18 20V4"/>
+                    <path d="M6 20v-4"/>
+                </svg>
+                Disputa de Posicoes
+            </h3>
+            <p class="info-text">As duplas eliminadas disputam posicoes do 9&#176; ao 14&#176; lugar em partidas de 1 set ate 11 pontos.</p>
+        </div>
+
+        <div class="info-divider"></div>
+
+        <div class="info-section">
+            <h3 class="info-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                Criterios de Classificacao
+            </h3>
+            <div class="info-grid" style="grid-template-columns: 1fr;">
+                <div class="info-item">
+                    <span class="info-label">Criterios de desempate</span>
+                    <span class="info-value">1&#176; Vitorias &middot; 2&#176; Saldo de sets &middot; 3&#176; Saldo de pontos</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Classificados para Playoffs</span>
+                    <span class="info-value">3&#176; do A &middot; 3&#176; do B &middot; 2&#176; do C</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if upcoming_matches %}
+<div class="card">
+    <div class="card-header">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Proximos Jogos</span>
+    </div>
+    <div class="card-body match-list">
+        {% for match in upcoming_matches %}
+        <a href="{% url 'match_detail' match.match_number %}" class="match-card-link">
+            <div class="match-card {{ match.status }}">
+                <div class="match-teams">
+                    <div class="match-team {% if match.status == 'finished' %}{% if match.winner_id == match.double_1_id %}winner{% else %}loser{% endif %}{% endif %}">
+                        {% if match.double_1 %}{{ match.double_1.name }}{% elif match.source_double_1_desc %}<span class="bracket-team-tbd">{{ match.source_double_1_desc }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                    </div>
+                    <div class="match-team {% if match.status == 'finished' %}{% if match.winner_id == match.double_2_id %}winner{% else %}loser{% endif %}{% endif %}">
+                        {% if match.double_2 %}{{ match.double_2.name }}{% elif match.source_double_2_desc %}<span class="bracket-team-tbd">{{ match.source_double_2_desc }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                   </div>
+                </div>
+                {% if match.status == 'finished' or match.status == 'in_progress' %}
+                <div class="match-score">
+                    {% for set in match.sets.all %}{{ set.points_double_1 }}-{{ set.points_double_2 }}{% if not forloop.last %} / {% endif %}{% endfor %}
+                </div>
+                {% endif %}
+                <span class="match-status status-{{ match.status }}">{{ match.get_status_display }}</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

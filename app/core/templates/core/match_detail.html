@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load static team_tags %}
+
+{% block title %}PicklePesp - Jogo {{ match_obj.match_number }}{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <a href="javascript:history.back()" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Voltar
+    </a>
+    <p class="section-title">
+        {% if match_obj.phase == 'grupo' %}Grupo{% elif match_obj.phase == 'semifinal' %}Playoffs{% elif match_obj.phase == 'final' %}Playoffs{% else %}Disputa{% endif %}
+    </p>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;">
+        <h1 class="page-title" style="flex:1;">
+            {% if match_obj.phase == 'grupo' %}Grupo {{ match_obj.group.name }}{% else %}Jogo {{ match_obj.match_number }}{% endif %}
+        </h1>
+        {% if is_admin %}
+        <a href="{% url 'admin_match_edit' match_obj.match_number %}" class="admin-edit-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Editar
+        </a>
+        {% endif %}
+    </div>
+    <p class="page-subtitle">{{ match_obj.get_phase_display }}</p>
+</div>
+
+<div class="match-detail-card">
+    <div class="match-detail-header">
+        <span class="badge {% if match_obj.status == 'finished' %}status-finished{% elif match_obj.status == 'in_progress' %}status-in_progress{% else %}status-pending{% endif %}">
+            {% if match_obj.status == 'finished' %}Finalizada{% elif match_obj.status == 'in_progress' %}Em andamento{% else %}Pendente{% endif %}
+        </span>
+        <span class="match-detail-number">J{{ match_obj.match_number }}</span>
+    </div>
+
+    <div class="match-detail-teams">
+        <div class="match-detail-team {% if match_obj.status == 'finished' %}{% if match_obj.winner_id == match_obj.double_1_id %}winner{% else %}loser{% endif %}{% endif %}">
+            <span class="match-detail-team-name">
+                {% if match_obj.double_1 %}{{ match_obj.double_1.name }}{% elif match_obj.source_double_1_desc %}{{ match_obj.source_double_1_desc }}{% else %}A definir{% endif %}
+            </span>
+            {% if match_obj.status == 'finished' and match_obj.winner_id == match_obj.double_1_id %}
+            <span class="match-detail-winner-badge">Vencedor</span>
+            {% endif %}
+        </div>
+        <div class="match-detail-vs">VS</div>
+        <div class="match-detail-team {% if match_obj.status == 'finished' %}{% if match_obj.winner_id == match_obj.double_2_id %}winner{% else %}loser{% endif %}{% endif %}">
+            <span class="match-detail-team-name">
+                {% if match_obj.double_2 %}{{ match_obj.double_2.name }}{% elif match_obj.source_double_2_desc %}{{ match_obj.source_double_2_desc }}{% else %}A definir{% endif %}
+            </span>
+            {% if match_obj.status == 'finished' and match_obj.winner_id == match_obj.double_2_id %}
+            <span class="match-detail-winner-badge">Vencedor</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if sets %}
+<div class="card mt-4">
+    <div class="card-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"/>
+            <line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/>
+            <line x1="3" y1="12" x2="3.01" y2="12"/>
+            <line x1="3" y1="18" x2="3.01" y2="18"/>
+        </svg>
+        <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Sets</span>
+    </div>
+    <div class="card-body" style="padding:0;">
+        <table class="sets-table">
+            <thead>
+                <tr>
+                    <th>Set</th>
+                    <th>{% if match_obj.double_1 %}{{ match_obj.double_1.name }}{% else %}Dupla 1{% endif %}</th>
+                    <th>{% if match_obj.double_2 %}{{ match_obj.double_2.name }}{% else %}Dupla 2{% endif %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for set in sets %}
+                <tr class="{% if set.points_double_1 > set.points_double_2 %}set-d1{% elif set.points_double_2 > set.points_double_1 %}set-d2{% endif %}">
+                    <td class="set-number">{{ set.set_number }}</td>
+                    <td class="{% if set.points_double_1 > set.points_double_2 %}set-winner{% elif set.points_double_1 < set.points_double_2 %}set-loser{% endif %}">
+                        {{ set.points_double_1 }}
+                    </td>
+                    <td class="{% if set.points_double_2 > set.points_double_1 %}set-winner{% elif set.points_double_2 < set.points_double_1 %}set-loser{% endif %}">
+                        {{ set.points_double_2 }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% if match_obj.phase %}
+<div class="card mt-4">
+    <div class="card-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        <span style="font-size:0.8125rem;font-weight:600;color:var(--text-primary);">Informacoes</span>
+    </div>
+    <div class="card-body">
+        <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="info-item">
+                <span class="info-label">Fase</span>
+                <span class="info-value">{{ match_obj.get_phase_display }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Status</span>
+                <span class="info-value">{{ match_obj.get_status_display }}</span>
+            </div>
+            {% if match_obj.best_of %}
+            <div class="info-item">
+                <span class="info-label">Formato</span>
+                <span class="info-value">Melhor de {{ match_obj.best_of }}</span>
+            </div>
+            {% endif %}
+            {% if match_obj.final_position_winner and match_obj.status == 'finished' %}
+            <div class="info-item">
+                <span class="info-label">Posicao vencedor</span>
+                <span class="info-value">{{ match_obj.final_position_winner }}&#176; lugar</span>
+            </div>
+            {% endif %}
+            {% if match_obj.final_position_loser and match_obj.status == 'finished' %}
+            <div class="info-item">
+                <span class="info-label">Posicao perdedor</span>
+                <span class="info-value">{{ match_obj.final_position_loser }}&#176; lugar</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

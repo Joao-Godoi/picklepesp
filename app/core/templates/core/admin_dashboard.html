@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}PicklePesp - Admin{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <p class="section-title">Administracao</p>
+    <h1 class="page-title">Gerenciar Partidas</h1>
+    <p class="page-subtitle">Clique em uma partida para editar os sets</p>
+</div>
+
+<div class="admin-tabs">
+    <button class="admin-tab active" data-tab="groups" onclick="switchTab('groups')">Grupos</button>
+    <button class="admin-tab" data-tab="playoffs" onclick="switchTab('playoffs')">Playoffs</button>
+    <button class="admin-tab" data-tab="disputas" onclick="switchTab('disputas')">Disputas</button>
+</div>
+
+<div id="tab-groups" class="admin-panel">
+    {% for data in group_matches %}
+    {% ifchanged data.group %}
+    {% if not forloop.first %}</div>{% endif %}
+    <div class="bracket-phase">
+        <div class="bracket-phase-title">Grupo {{ data.group.name }}</div>
+    {% endifchanged %}
+        <a href="{% url 'admin_match_edit' data.match_number %}" class="match-card-link">
+            <div class="bracket-match {{ data.status }}">
+                <div class="bracket-match-number">J{{ data.match_number }}</div>
+                <div class="bracket-match-body">
+                    <div class="bracket-team {% if data.status == 'finished' %}{% if data.winner_id == data.double_1_id %}winner{% elif data.double_1_id %}loser{% endif %}{% endif %}">
+                        <span class="bracket-team-name">
+                            {% if data.double_1 %}{{ data.double_1.name }}{% elif data.source_double_1_desc %}<span class="bracket-team-tbd">{{ data.source_double_1_desc }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                        </span>
+                        {% if data.status == 'finished' or data.status == 'in_progress' %}
+                        <div class="bracket-team-scores">
+                            {% for set in data.sets.all %}
+                            <span class="bracket-set-score {% if set.points_double_1 > set.points_double_2 %}won{% endif %}">{{ set.points_double_1 }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="bracket-team {% if data.status == 'finished' %}{% if data.winner_id == data.double_2_id %}winner{% elif data.double_2_id %}loser{% endif %}{% endif %}">
+                        <span class="bracket-team-name">
+                            {% if data.double_2 %}{{ data.double_2.name }}{% elif data.source_double_2_desc %}<span class="bracket-team-tbd">{{ data.source_double_2_desc }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                        </span>
+                        {% if data.status == 'finished' or data.status == 'in_progress' %}
+                        <div class="bracket-team-scores">
+                            {% for set in data.sets.all %}
+                            <span class="bracket-set-score {% if set.points_double_2 > set.points_double_1 %}won{% endif %}">{{ set.points_double_2 }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <span class="match-status status-{{ data.status }}">{{ data.get_status_display }}</span>
+            </div>
+        </a>
+    {% if forloop.last %}</div>{% endif %}
+    {% endfor %}
+</div>
+
+<div id="tab-playoffs" class="admin-panel" style="display:none;">
+    {% for match in bracket_matches %}
+    {% if match.phase == 'semifinal' or match.phase == 'final' or match.match_number >= 5 and match.match_number <= 16 and match.phase != 'disputa' %}
+    <a href="{% url 'admin_match_edit' match.match_number %}" class="match-card-link">
+        <div class="bracket-match {{ match.status }}">
+            <div class="bracket-match-number">J{{ match.match_number }}</div>
+            <div class="bracket-match-body">
+                <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.double_1_id %}winner{% elif match.double_1_id %}loser{% endif %}{% endif %}">
+                    <span class="bracket-team-name">
+                        {% if match.double_1 %}{{ match.double_1.name }}{% elif match.source_double_1_desc %}<span class="bracket-team-tbd">{{ match.source_double_1_desc }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                    </span>
+                </div>
+                <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.double_2_id %}winner{% elif match.double_2_id %}loser{% endif %}{% endif %}">
+                    <span class="bracket-team-name">
+                        {% if match.double_2 %}{{ match.double_2.name }}{% elif match.source_double_2_desc %}<span class="bracket-team-tbd">{{ match.source_double_2_desc }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                    </span>
+                </div>
+            </div>
+            <span class="match-status status-{{ match.status }}">{{ match.get_status_display }}</span>
+        </div>
+    </a>
+    {% endif %}
+    {% endfor %}
+</div>
+
+<div id="tab-disputas" class="admin-panel" style="display:none;">
+    {% for match in bracket_matches %}
+    {% if match.phase == 'disputa' %}
+    <a href="{% url 'admin_match_edit' match.match_number %}" class="match-card-link">
+        <div class="bracket-match {{ match.status }}">
+            <div class="bracket-match-number">J{{ match.match_number }}</div>
+            <div class="bracket-match-body">
+                <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.double_1_id %}winner{% elif match.double_1_id %}loser{% endif %}{% endif %}">
+                    <span class="bracket-team-name">
+                        {% if match.double_1 %}{{ match.double_1.name }}{% elif match.source_double_1_desc %}<span class="bracket-team-tbd">{{ match.source_double_1_desc }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                    </span>
+                </div>
+                <div class="bracket-team {% if match.status == 'finished' %}{% if match.winner_id == match.double_2_id %}winner{% elif match.double_2_id %}loser{% endif %}{% endif %}">
+                    <span class="bracket-team-name">
+                        {% if match.double_2 %}{{ match.double_2.name }}{% elif match.source_double_2_desc %}<span class="bracket-team-tbd">{{ match.source_double_2_desc }}</span>{% else %}<span class="bracket-team-tbd">A definir</span>{% endif %}
+                    </span>
+                </div>
+            </div>
+            <span class="match-status status-{{ match.status }}">{{ match.get_status_display }}</span>
+        </div>
+    </a>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function switchTab(tab) {
+    document.querySelectorAll('.admin-panel').forEach(function(p) { p.style.display = 'none'; });
+    document.querySelectorAll('.admin-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.getElementById('tab-' + tab).style.display = 'block';
+    document.querySelector('.admin-tab[data-tab="' + tab + '"]').classList.add('active');
+}
+</script>
+{% endblock %}
