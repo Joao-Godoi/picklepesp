@@ -36,6 +36,7 @@ Thumbs.db
 *.md
 !README.md
 !requirements.txt
+design_system/*
 
 # Prompt files
 PROMPT_*
