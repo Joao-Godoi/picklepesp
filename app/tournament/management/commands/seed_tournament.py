@@ -46,6 +46,8 @@ PLAYOFF_MATCHES = [
         "best_of": 1,
         "source_team_a": "Vencedor jogo 1",
         "source_team_b": "4o Grupo C",
+        "source_match_a_number": 1,
+        "source_match_a_is_winner": True,
         "final_position_loser": 13,
         "final_position_winner": 12,
         "sort_order": 2,
@@ -67,6 +69,8 @@ PLAYOFF_MATCHES = [
         "best_of": 1,
         "source_team_a": "Vencedor jogo 3",
         "source_team_b": "3o Grupo C",
+        "source_match_a_number": 3,
+        "source_match_a_is_winner": True,
         "final_position_loser": 10,
         "final_position_winner": 9,
         "sort_order": 4,
@@ -114,6 +118,10 @@ PLAYOFF_MATCHES = [
         "best_of": 3,
         "source_team_a": "Perdedor jogo 5",
         "source_team_b": "Perdedor jogo 6",
+        "source_match_a_number": 5,
+        "source_match_a_is_winner": False,
+        "source_match_b_number": 6,
+        "source_match_b_is_winner": False,
         "sort_order": 9,
     },
     {
@@ -123,6 +131,10 @@ PLAYOFF_MATCHES = [
         "best_of": 3,
         "source_team_a": "Perdedor jogo 7",
         "source_team_b": "Perdedor jogo 8",
+        "source_match_a_number": 7,
+        "source_match_a_is_winner": False,
+        "source_match_b_number": 8,
+        "source_match_b_is_winner": False,
         "sort_order": 10,
     },
     {
@@ -132,6 +144,10 @@ PLAYOFF_MATCHES = [
         "best_of": 3,
         "source_team_a": "Perdedor jogo 9",
         "source_team_b": "Perdedor jogo 10",
+        "source_match_a_number": 9,
+        "source_match_a_is_winner": False,
+        "source_match_b_number": 10,
+        "source_match_b_is_winner": False,
         "final_position_winner": 7,
         "final_position_loser": 8,
         "sort_order": 11,
@@ -143,6 +159,10 @@ PLAYOFF_MATCHES = [
         "best_of": 3,
         "source_team_a": "Vencedor jogo 9",
         "source_team_b": "Vencedor jogo 10",
+        "source_match_a_number": 9,
+        "source_match_a_is_winner": True,
+        "source_match_b_number": 10,
+        "source_match_b_is_winner": True,
         "final_position_winner": 5,
         "final_position_loser": 6,
         "sort_order": 12,
@@ -154,6 +174,10 @@ PLAYOFF_MATCHES = [
         "best_of": 3,
         "source_team_a": "Vencedor jogo 5",
         "source_team_b": "Vencedor jogo 6",
+        "source_match_a_number": 5,
+        "source_match_a_is_winner": True,
+        "source_match_b_number": 6,
+        "source_match_b_is_winner": True,
         "sort_order": 13,
     },
     {
@@ -163,6 +187,10 @@ PLAYOFF_MATCHES = [
         "best_of": 3,
         "source_team_a": "Vencedor jogo 7",
         "source_team_b": "Vencedor jogo 8",
+        "source_match_a_number": 7,
+        "source_match_a_is_winner": True,
+        "source_match_b_number": 8,
+        "source_match_b_is_winner": True,
         "sort_order": 14,
     },
     {
@@ -172,6 +200,10 @@ PLAYOFF_MATCHES = [
         "best_of": 3,
         "source_team_a": "Perdedor jogo 13",
         "source_team_b": "Perdedor jogo 14",
+        "source_match_a_number": 13,
+        "source_match_a_is_winner": False,
+        "source_match_b_number": 14,
+        "source_match_b_is_winner": False,
         "final_position_winner": 3,
         "final_position_loser": 4,
         "sort_order": 15,
@@ -183,6 +215,10 @@ PLAYOFF_MATCHES = [
         "best_of": 3,
         "source_team_a": "Vencedor jogo 13",
         "source_team_b": "Vencedor jogo 14",
+        "source_match_a_number": 13,
+        "source_match_a_is_winner": True,
+        "source_match_b_number": 14,
+        "source_match_b_is_winner": True,
         "final_position_winner": 1,
         "final_position_loser": 2,
         "sort_order": 16,
@@ -259,7 +295,7 @@ class Command(BaseCommand):
                         "group": group,
                         "team_a": team_a,
                         "team_b": team_b,
-                        "status": Match.STATUS_PENDING,
+                        "status": Match.STATUS_READY,
                         "best_of": 3,
                         "sort_order": sort_counter + i,
                     },
@@ -288,6 +324,8 @@ class Command(BaseCommand):
             if created:
                 playoff_created += 1
 
+        self._link_source_matches()
+
         self.stdout.write(f"{playoff_created} partida(s) de playoff criada(s)")
 
         total_groups = Group.objects.count()
@@ -301,3 +339,41 @@ class Command(BaseCommand):
                 f"{total_matches} partida(s)"
             )
         )
+
+    def _link_source_matches(self):
+        for match_data in PLAYOFF_MATCHES:
+            match = Match.objects.filter(
+                match_number=match_data["match_number"],
+                bracket_type=match_data["bracket_type"],
+            ).first()
+            if not match:
+                continue
+
+            updated = False
+
+            if "source_match_a_number" in match_data:
+                source = Match.objects.filter(
+                    match_number=match_data["source_match_a_number"],
+                    bracket_type=match.bracket_type,
+                ).first()
+                if source:
+                    match.source_match_a = source
+                    match.source_match_a_is_winner = match_data.get(
+                        "source_match_a_is_winner"
+                    )
+                    updated = True
+
+            if "source_match_b_number" in match_data:
+                source = Match.objects.filter(
+                    match_number=match_data["source_match_b_number"],
+                    bracket_type=match.bracket_type,
+                ).first()
+                if source:
+                    match.source_match_b = source
+                    match.source_match_b_is_winner = match_data.get(
+                        "source_match_b_is_winner"
+                    )
+                    updated = True
+
+            if updated:
+                match.save()
