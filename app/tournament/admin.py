@@ -2,7 +2,7 @@ from django.contrib import admin, messages
 from django.core.exceptions import ValidationError
 
 from tournament.models import Group, Team, Match, MatchSet
-from tournament.services import determine_match_winner, validate_match_sets
+from tournament.services import determine_match_winner, validate_match_sets, propagate_match_result
 
 admin.site.site_header = "PicklePesp - Administracao"
 admin.site.site_title = "PicklePesp Admin"
@@ -134,6 +134,8 @@ class MatchAdmin(admin.ModelAdmin):
             winner = determine_match_winner(obj)
             if winner:
                 Match.objects.filter(pk=obj.pk).update(winner=winner)
+                obj.refresh_from_db()
+                propagate_match_result(obj)
                 messages.success(
                     request, f"Vencedor definido automaticamente: {winner}"
                 )

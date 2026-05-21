@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.db import transaction
 
 from tournament.models import Match
 
@@ -120,7 +121,87 @@ def finalize_match(match):
     match.winner = winner
     match.status = Match.STATUS_FINISHED
     match.save(update_fields=["winner", "status", "updated_at"])
+    propagate_match_result(match)
     return match
+
+
+def propagate_match_result(match):
+    if not match.winner_id:
+        return
+
+    loser_id = match.team_b_id if match.winner_id == match.team_a_id else match.team_a_id
+
+    for dependent in match.dependent_as_team_a.all():
+        if dependent.source_match_a_is_winner:
+            dependent.team_a_id = match.winner_id
+        else:
+            dependent.team_a_id = loser_id
+        _update_dependent_status(dependent)
+
+    for dependent in match.dependent_as_team_b.all():
+        if dependent.source_match_b_is_winner:
+            dependent.team_b_id = match.winner_id
+        else:
+            dependent.team_b_id = loser_id
+        _update_dependent_status(dependent)
+
+
+def _update_dependent_status(match):
+    if match.team_a_id and match.team_b_id:
+        if match.status in (Match.STATUS_PENDING, Match.STATUS_BLOCKED):
+            match.status = Match.STATUS_READY
+    match.save(update_fields=["team_a", "team_b", "status", "updated_at"])
+
+
+def recalculate_tournament():
+    with transaction.atomic():
+        for match in Match.objects.filter(status=Match.STATUS_FINISHED).order_by(
+            "sort_order", "match_number"
+        ):
+            winner = determine_match_winner(match)
+            if winner and match.winner_id != winner.pk:
+                match.winner = winner
+                match.save(update_fields=["winner", "updated_at"])
+            propagate_match_result(match)
+
+        for match in Match.objects.exclude(status=Match.STATUS_FINISHED).order_by(
+            "sort_order", "match_number"
+        ):
+            if match.source_match_a_id or match.source_match_b_id:
+                _try_resolve_teams(match)
+
+
+def _try_resolve_teams(match):
+    changed = False
+
+    if match.source_match_a_id:
+        source = match.source_match_a
+        if source and source.status == Match.STATUS_FINISHED and source.winner_id:
+            loser_id = (
+                source.team_b_id
+                if source.winner_id == source.team_a_id
+                else source.team_a_id
+            )
+            resolved_id = source.winner_id if match.source_match_a_is_winner else loser_id
+            if match.team_a_id != resolved_id:
+                match.team_a_id = resolved_id
+                changed = True
+
+    if match.source_match_b_id:
+        source = match.source_match_b
+        if source and source.status == Match.STATUS_FINISHED and source.winner_id:
+            loser_id = (
+                source.team_b_id
+                if source.winner_id == source.team_a_id
+                else source.team_a_id
+            )
+            resolved_id = source.winner_id if match.source_match_b_is_winner else loser_id
+            if match.team_b_id != resolved_id:
+                match.team_b_id = resolved_id
+                changed = True
+
+    if changed:
+        _update_dependent_status(match)
 
 
 def compute_group_standings(group):
