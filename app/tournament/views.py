@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views.decorators.cache import never_cache
 
 from tournament.selectors import (
@@ -10,9 +11,7 @@ from tournament.selectors import (
 
 @never_cache
 def groups(request):
-    return render(
-        request, "tournament/groups.html", {"groups_data": get_groups_page_data()}
-    )
+    return redirect(reverse("home"))
 
 
 @never_cache

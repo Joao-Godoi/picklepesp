@@ -1,4 +1,5 @@
 from django.contrib import admin, messages
+from django.utils.html import format_html
 
 from tournament.models import Double, Group, Match, Set as MatchSet
 from tournament.services import (
@@ -64,6 +65,7 @@ class MatchAdmin(admin.ModelAdmin):
         "double_2",
         "status",
         "winner",
+        "dashboard_link",
     ]
     list_filter = ["phase", "status", "group"]
     search_fields = [
@@ -113,6 +115,12 @@ class MatchAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+    def dashboard_link(self, obj):
+        from django.urls import reverse
+        url = reverse("admin_match_edit", kwargs={"match_number": obj.match_number})
+        return format_html('<a href="{}" target="_blank">Painel</a>', url)
+    dashboard_link.short_description = "Painel"
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
