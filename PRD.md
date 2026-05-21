@@ -1001,13 +1001,13 @@ Entregaveis:
 
 Tarefas:
 
-- [ ] Completar testes de dominio.
-- [ ] Completar testes de views publicas.
-- [ ] Testar admin basico.
-- [ ] Configurar Nginx.
-- [ ] Validar Gunicorn.
-- [ ] Validar persistencia do SQLite em volume.
-- [ ] Documentar comandos operacionais.
+- [x] Completar testes de dominio.
+- [x] Completar testes de views publicas.
+- [x] Testar admin basico.
+- [x] Configurar Nginx.
+- [x] Validar Gunicorn.
+- [x] Validar persistencia do SQLite em volume.
+- [x] Documentar comandos operacionais.
 
 Criterios de conclusao:
 
