@@ -4,9 +4,9 @@ register = template.Library()
 
 
 @register.filter
-def team_display(team, is_admin=False):
-    if not team:
+def team_display(double, is_admin=False):
+    if not double:
         return ""
     if is_admin:
-        return f"Dupla {team.team_number} - {team.player1_name} / {team.player2_name}"
-    return f"Dupla {team.team_number}"
+        return f"{double.name} - {double.player_1} / {double.player_2}"
+    return double.name
