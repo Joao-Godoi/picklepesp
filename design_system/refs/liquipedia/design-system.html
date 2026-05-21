@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html class="client-js Send_pizza_to_FO-nTTaX All_glory_to_Liquipedia theme--light" lang="en" dir="ltr" prefix="og: http://ogp.me/ns#">
+<head>
+<meta charset="UTF-8">
+<title>Liquipedia Counter-Strike Design System</title>
+<script>
+document.documentElement.className = "client-js Send_pizza_to_FO-nTTaX All_glory_to_Liquipedia theme--light";
+window.RLCONF = {};
+window.RLSTATE = {};
+window.RLPAGEMODULES = [];
+window.RLQ = window.RLQ || [];
+</script>
+<link rel="stylesheet" href="load_2.php">
+<script async="" src="load.php"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Droid+Sans+Mono&family=Source+Code+Pro:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap&text=adehilpqu">
+<link rel="stylesheet" href="load_3.php">
+<meta name="ResourceLoaderDynamicStyles" content="">
+<link rel="stylesheet" href="load_1.php">
+<script>
+(function () {
+  ['load_2.php', 'load_3.php', 'load_1.php'].forEach(function (path) {
+    try {
+      var request = new XMLHttpRequest();
+      request.open('GET', path, false);
+      request.send(null);
+
+      if ((request.status >= 200 && request.status < 300) || request.status === 0) {
+        var style = document.createElement('style');
+        style.setAttribute('data-source', path);
+        style.textContent = request.responseText;
+        document.head.appendChild(style);
+      }
+    } catch (error) {
+      window.console && window.console.warn && window.console.warn('Failed to inline CSS:', path, error);
+    }
+  });
+}());
+</script>
+<meta name="generator" content="MediaWiki 1.43.8">
+<meta name="robots" content="max-image-preview:standard">
+<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=0.25, maximum-scale=5.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="theme-color" content="#54711b">
+<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+<link rel="icon" sizes="32x32" type="image/png" href="images/favicon-32x32.png">
+<link rel="icon" sizes="16x16" type="image/png" href="images/favicon-16x16.png">
+<link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#00162c">
+<script>
+const localStorageValue = window.localStorage.getItem('LiquipediaTheme');
+let themeClass = 'theme--light';
+
+if (
+  localStorageValue === 'dark' ||
+  (
+    ['system', null].includes(localStorageValue) &&
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+  )
+) {
+  themeClass = 'theme--dark';
+}
+
+document.documentElement.classList.remove('theme--light', 'theme--dark');
+document.documentElement.classList.add(themeClass);
+</script>
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject page-ESL_Pro_League_Season_23_Online_Stage_Stage_1 rootpage-ESL skin-lakesideview action-view skin--responsive wiki-counterstrike Liquipedia_loves_KnifeRound_and_Clanwiki logged-out" id="top">
+<nav id="main-nav" class="main-nav navbar navbar-expand-md noprint">
+  <div class="container container-custom">
+    <a class="navbar-brand main-nav__logo-icon" href="#top" title="Back to top">
+      <img id="brand-logo" class="brand-logo" src="images/liquipedia_icon_menu.png" alt="Logo">
+    </a>
+    <a class="nav-link dropdown-toggle brand-title main-nav__logo-text" href="#0">
+      <div>
+        <span id="brand-desktop" class="brand-name logotype">liquipedia</span>
+        <br>
+        <span class="brand-subtitle">Design System</span>
+      </div>
+    </a>
+    <ul class="nav navbar-nav float-right navbar-nav-2">
+      <li id="dropdown-theme" class="dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" data-component="theme-switch" data-theme-selected="selected" href="#" aria-label="Auto selected">
+          <span class="fas fa-fw fa-desktop icon"></span>
+          <span class="d-none d-lg-inline" data-theme-label>Auto</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right lakesideview-menu-theme">
+          <button type="button" class="dropdown-item" data-set-theme="light" data-theme-name="Light" aria-label="Select Light" aria-selected="false">
+            <span class="fas fa-fw fa-sun icon"></span>
+            Light
+          </button>
+          <button type="button" class="dropdown-item" data-set-theme="dark" data-theme-name="Dark" aria-label="Select Dark" aria-selected="false">
+            <span class="fas fa-fw fa-moon icon"></span>
+            Dark
+          </button>
+          <button type="button" class="dropdown-item" data-set-theme="system" data-theme-name="Auto" aria-label="Select Auto" aria-selected="true">
+            <span class="fas fa-fw fa-desktop icon"></span>
+            Auto
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="wiki-nav">
+  <div class="container container-custom">
+    <ul class="nav">
+      <li class="nav-item"><a class="nav-link" href="#0" title="Hero">0</a></li>
+      <li class="nav-item"><a class="nav-link" href="#1" title="Tipografia">1</a></li>
+      <li class="nav-item"><a class="nav-link" href="#2" title="Cores e Superfícies">2</a></li>
+      <li class="nav-item"><a class="nav-link" href="#3" title="Componentes de UI">3</a></li>
+      <li class="nav-item"><a class="nav-link" href="#4" title="Layout e Espaçamento">4</a></li>
+      <li class="nav-item"><a class="nav-link" href="#5" title="Motion e Interação">5</a></li>
+      <li class="nav-item"><a class="nav-link" href="#6" title="Ícones">6</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="main-content-container">
+  <main id="main-content-column" class="container-layout main-content-column main-content">
+    <div id="main-content" class="mw-body">
+      <div id="bodyContent" class="mw-body-content">
+        <section id="0" name="Hero (Clone Exato)">
+          <div id="siteNotice">
+            <div id="network-notice-189" data-id="189" class="network-notice" data-component="network-notice">
+              <div class="network-notice__content-wrapper">
+                <div class="network-notice__content-icon"><i class="fa fa-info-circle"></i></div>
+                <div class="network-notice__content">Take a free minute: browse the live design library and inspect the Liquipedia Counter-Strike patterns that shape the whole page shell.</div>
+              </div>
+              <div class="network-notice__close-button" aria-label="Close notification" data-component="network-notice-close-button" title="Close notification" tabindex="0"><i class="fa fa-times"></i></div>
+            </div>
+          </div>
+          <h1 id="firstHeading" class="firstHeading"><span dir="auto">Liquipedia Counter-Strike Design System</span></h1>
+          <div id="siteSub">From Liquipedia Counter-Strike Wiki</div>
+          <div id="contentSub" class="content-sub">
+            <div id="mw-content-subtitle">
+              <div class="subpages">
+                &lt;
+                <bdi dir="ltr"><a href="#0" title="Liquipedia">Liquipedia</a></bdi>
+                |
+                <bdi dir="ltr"><a href="#1" title="Counter-Strike">Counter-Strike</a></bdi>
+                |
+                <bdi dir="ltr"><a href="#2" title="Design System">Design System</a></bdi>
+                |
+                <bdi dir="ltr"><a href="#5" title="Live Library">Live Library</a></bdi>
+              </div>
+            </div>
+          </div>
+          <div id="toc" class="toc d-none d-sm-table d-xl-none" role="navigation" aria-labelledby="mw-toc-heading">
+            <input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox">
+            <div class="toctitle" lang="en" dir="ltr">
+              <h2 id="mw-toc-heading">Contents</h2>
+              <span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span>
+            </div>
+            <ul>
+              <li class="toclevel-1 tocsection-1"><a href="#0"><span class="tocnumber">0</span> <span class="toctext">Hero</span></a></li>
+              <li class="toclevel-1 tocsection-2"><a href="#1"><span class="tocnumber">1</span> <span class="toctext">Tipografia</span></a></li>
+              <li class="toclevel-1 tocsection-3"><a href="#2"><span class="tocnumber">2</span> <span class="toctext">Cores e Superfícies</span></a></li>
+              <li class="toclevel-1 tocsection-4"><a href="#3"><span class="tocnumber">3</span> <span class="toctext">Componentes de UI</span></a></li>
+              <li class="toclevel-1 tocsection-5"><a href="#4"><span class="tocnumber">4</span> <span class="toctext">Layout e Espaçamento</span></a></li>
+              <li class="toclevel-1 tocsection-6"><a href="#5"><span class="tocnumber">5</span> <span class="toctext">Motion e Interação</span></a></li>
+              <li class="toclevel-1 tocsection-7"><a href="#6"><span class="tocnumber">6</span> <span class="toctext">Ícones</span></a></li>
+            </ul>
+          </div>
+        </section>
+
+        <div class="mw-parser-output">
+          <section id="1" name="Tipografia">
+            <div class="mw-heading mw-heading2"><h2>Tipografia</h2></div>
+            <div class="table-responsive">
+              <table class="wikitable wikitable-bordered wikitable-striped swisstable">
+                <tbody>
+                  <tr>
+                    <th>Style</th>
+                    <th>Preview</th>
+                    <th class="text-right">Spec</th>
+                  </tr>
+                  <tr>
+                    <th>Heading 1</th>
+                    <td><h1 id="firstHeading">Liquipedia Counter-Strike Design System</h1></td>
+                    <td class="text-right">30px / 33px</td>
+                  </tr>
+                  <tr>
+                    <th>Heading 2</th>
+                    <td><div class="mw-heading mw-heading2"><h2>Section Heading</h2></div></td>
+                    <td class="text-right">24px / 36px</td>
+                  </tr>
+                  <tr>
+                    <th>Heading 3</th>
+                    <td><div class="mw-heading mw-heading3"><h3>Subsection Heading</h3></div></td>
+                    <td class="text-right">20px / 31px</td>
+                  </tr>
+                  <tr>
+                    <th>Heading 4</th>
+                    <td><div class="mw-heading mw-heading4"><h4>Component Heading</h4></div></td>
+                    <td class="text-right">19px / 28px</td>
+                  </tr>
+                  <tr>
+                    <th>Bold M</th>
+                    <td><button type="button" class="btn btn-secondary">Button Label</button></td>
+                    <td class="text-right">14px / 20px</td>
+                  </tr>
+                  <tr>
+                    <th>Bold S</th>
+                    <td><button type="button" class="btn btn-secondary btn-extrasmall">Show</button></td>
+                    <td class="text-right">11px / 16px</td>
+                  </tr>
+                  <tr>
+                    <th>Paragraph</th>
+                    <td><p>Liquipedia keeps dense competitive information readable through a simple body rhythm and restrained page typography.</p></td>
+                    <td class="text-right">16px / 24px</td>
+                  </tr>
+                  <tr>
+                    <th>Regular S</th>
+                    <td><ul class="nav"><li class="nav-item"><a class="nav-link" href="#2">Section link</a></li></ul></td>
+                    <td class="text-right">14px / 21px</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="2" name="Cores e Superfícies">
+            <div class="mw-heading mw-heading2"><h2>Cores e Superfícies</h2></div>
+            <div class="table-responsive">
+              <table class="wikitable wikitable-bordered wikitable-striped swisstable">
+                <tbody>
+                  <tr>
+                    <th>System</th>
+                    <th>Live Surface</th>
+                    <th>Usage</th>
+                  </tr>
+                  <tr>
+                    <th>Page / Navigation</th>
+                    <td>
+                      <ul class="nav">
+                        <li class="nav-item"><a class="nav-link" href="#0">Hero</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#3">UI</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#6">Icons</a></li>
+                      </ul>
+                    </td>
+                    <td>The fixed header concentrates the strongest brand color and the highest contrast treatment.</td>
+                  </tr>
+                  <tr>
+                    <th>Notice / Card</th>
+                    <td>
+                      <div class="network-notice">
+                        <div class="network-notice__content-wrapper">
+                          <div class="network-notice__content-icon"><i class="fa fa-info-circle"></i></div>
+                          <div class="network-notice__content">Information cards use a raised white surface with a tinted left accent bar.</div>
+                        </div>
+                        <div class="network-notice__close-button" aria-hidden="true"><i class="fa fa-times"></i></div>
+                      </div>
+                    </td>
+                    <td>Primary message surface for notifications, alerts, and editorial prompts.</td>
+                  </tr>
+                  <tr>
+                    <th>Table / Divider</th>
+                    <td>
+                      <table class="wikitable">
+                        <tbody>
+                          <tr><th>Header</th><th>Value</th></tr>
+                          <tr><td>Border</td><td>Cell grid</td></tr>
+                        </tbody>
+                      </table>
+                    </td>
+                    <td>Structured data relies on hard borders, header fills, and alternating density rather than decorative panels.</td>
+                  </tr>
+                  <tr>
+                    <th>Theme Contrast</th>
+                    <td>
+                      <div class="template-box theme--light">
+                        <div class="network-notice">
+                          <div class="network-notice__content-wrapper">
+                            <div class="network-notice__content-icon"><i class="fa fa-sun"></i></div>
+                            <div class="network-notice__content">Light surface</div>
+                          </div>
+                          <div class="network-notice__close-button" aria-hidden="true"><i class="fa fa-times"></i></div>
+                        </div>
+                      </div>
+                      <div class="template-box theme--dark">
+                        <div class="network-notice">
+                          <div class="network-notice__content-wrapper">
+                            <div class="network-notice__content-icon"><i class="fa fa-moon"></i></div>
+                            <div class="network-notice__content">Dark surface</div>
+                          </div>
+                          <div class="network-notice__close-button" aria-hidden="true"><i class="fa fa-times"></i></div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>The same components flip between light and dark surfaces without changing their structural markup.</td>
+                  </tr>
+                  <tr>
+                    <th>Gradients / Overlays</th>
+                    <td>
+                      <div class="dropdown-menu show lakesideview-menu-theme">
+                        <button type="button" class="dropdown-item" aria-selected="true"><span class="fas fa-fw fa-desktop icon"></span>Auto</button>
+                        <button type="button" class="dropdown-item"><span class="fas fa-fw fa-sun icon"></span>Light</button>
+                        <button type="button" class="dropdown-item"><span class="fas fa-fw fa-moon icon"></span>Dark</button>
+                      </div>
+                    </td>
+                    <td>No standalone gradient block is exposed in this snapshot. The visual accents come from theme overlays, icon sprites, and surface contrast.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="3" name="Componentes de UI">
+            <div class="mw-heading mw-heading2"><h2>Componentes de UI</h2></div>
+            <div class="mw-heading mw-heading3"><h3>Buttons</h3></div>
+            <div class="table-responsive">
+              <table class="wikitable wikitable-bordered wikitable-striped">
+                <tbody>
+                  <tr>
+                    <th>Default</th>
+                    <th>Hover</th>
+                    <th>Active</th>
+                    <th>Focus</th>
+                    <th>Disabled</th>
+                  </tr>
+                  <tr>
+                    <td><button type="button" class="btn btn-secondary">Show</button></td>
+                    <td><button type="button" class="btn btn-secondary">Hover me</button></td>
+                    <td><button type="button" class="btn btn-secondary active">Active</button></td>
+                    <td><button type="button" class="btn btn-secondary focus">Focus</button></td>
+                    <td><button type="button" class="btn btn-secondary" disabled>Disabled</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mw-heading mw-heading3"><h3>Compact Button</h3></div>
+            <div class="table-responsive">
+              <table class="wikitable wikitable-bordered wikitable-striped">
+                <tbody>
+                  <tr>
+                    <th>Default</th>
+                    <th>Hover</th>
+                    <th>Active</th>
+                    <th>Focus</th>
+                    <th>Disabled</th>
+                  </tr>
+                  <tr>
+                    <td><button type="button" class="btn btn-secondary btn-extrasmall">Show</button></td>
+                    <td><button type="button" class="btn btn-secondary btn-extrasmall">Hover</button></td>
+                    <td><button type="button" class="btn btn-secondary btn-extrasmall active">Active</button></td>
+                    <td><button type="button" class="btn btn-secondary btn-extrasmall focus">Focus</button></td>
+                    <td><button type="button" class="btn btn-secondary btn-extrasmall" disabled>Disabled</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mw-heading mw-heading3"><h3>Collapsible Matchlist</h3></div>
+            <div>
+              <div class="template-box">
+                <div class="general-collapsible brkts-matchlist collapsed">
+                  <div class="general-collapsible-default-header brkts-matchlist-title">
+                    <b class="general-collapsible-default-title">Round 2 High Matches</b>
+                    <span class="general-collapsible-default-toggle">
+                      <div class="btn btn-secondary btn-extrasmall general-collapsible-expand-button" role="button" tabindex="0"><span><i class="far fa-eye"></i> Show</span></div>
+                      <div class="btn btn-secondary btn-extrasmall general-collapsible-collapse-button" role="button" tabindex="0"><span><i class="far fa-eye-slash"></i> Hide</span></div>
+                    </span>
+                  </div>
+                  <div class="should-collapse brkts-matchlist-collapse-area">
+                    <div class="brkts-matchlist-header">March 2, 2026</div>
+                    <div class="brkts-matchlist-match brkts-match-has-details brkts-match-popup-wrapper">
+                      <div class="brkts-matchlist-cell brkts-matchlist-opponent brkts-opponent-hover" aria-label="HEROIC">
+                        <div class="block-team brkts-matchlist-cell-content flipped">
+                          <span class="team-template-image-icon"><img alt="" src="images/57px-HEROIC_2024_allmode.png" decoding="async" width="57" height="50"></span>
+                          <span class="name">HEROIC</span>
+                        </div>
+                      </div>
+                      <div class="brkts-matchlist-cell brkts-matchlist-score brkts-opponent-hover" aria-label="HEROIC"><div class="brkts-matchlist-cell-content">0</div></div>
+                      <div class="brkts-match-info-icon"></div>
+                      <div class="brkts-matchlist-cell brkts-matchlist-score brkts-matchlist-slot-bold brkts-opponent-hover" aria-label="Astralis"><div class="brkts-matchlist-cell-content">2</div></div>
+                      <div class="brkts-matchlist-cell brkts-matchlist-opponent brkts-matchlist-slot-winner brkts-opponent-hover" aria-label="Astralis">
+                        <div class="block-team brkts-matchlist-cell-content">
+                          <span class="team-template-image-icon"><img alt="" src="images/41px-Astralis_2020_allmode.png" decoding="async" width="41" height="50"></span>
+                          <span class="name">Astralis</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="template-box">
+                <div class="general-collapsible brkts-matchlist">
+                  <div class="general-collapsible-default-header brkts-matchlist-title">
+                    <b class="general-collapsible-default-title">Round 2 High Matches</b>
+                    <span class="general-collapsible-default-toggle">
+                      <div class="btn btn-secondary btn-extrasmall general-collapsible-expand-button" role="button" tabindex="0"><span><i class="far fa-eye"></i> Show</span></div>
+                      <div class="btn btn-secondary btn-extrasmall general-collapsible-collapse-button" role="button" tabindex="0"><span><i class="far fa-eye-slash"></i> Hide</span></div>
+                    </span>
+                  </div>
+                  <div class="should-collapse brkts-matchlist-collapse-area">
+                    <div class="brkts-matchlist-header">March 2, 2026</div>
+                    <div class="brkts-matchlist-match brkts-match-has-details brkts-match-popup-wrapper">
+                      <div class="brkts-matchlist-cell brkts-matchlist-opponent brkts-opponent-hover" aria-label="HEROIC">
+                        <div class="block-team brkts-matchlist-cell-content flipped">
+                          <span class="team-template-image-icon"><img alt="" src="images/57px-HEROIC_2024_allmode.png" decoding="async" width="57" height="50"></span>
+                          <span class="name">HEROIC</span>
+                        </div>
+                      </div>
+                      <div class="brkts-matchlist-cell brkts-matchlist-score brkts-opponent-hover" aria-label="HEROIC"><div class="brkts-matchlist-cell-content">0</div></div>
+                      <div class="brkts-match-info-icon"></div>
+                      <div class="brkts-matchlist-cell brkts-matchlist-score brkts-matchlist-slot-bold brkts-opponent-hover" aria-label="Astralis"><div class="brkts-matchlist-cell-content">2</div></div>
+                      <div class="brkts-matchlist-cell brkts-matchlist-opponent brkts-matchlist-slot-winner brkts-opponent-hover" aria-label="Astralis">
+                        <div class="block-team brkts-matchlist-cell-content">
+                          <span class="team-template-image-icon"><img alt="" src="images/41px-Astralis_2020_allmode.png" decoding="async" width="41" height="50"></span>
+                          <span class="name">Astralis</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="4" name="Layout e Espaçamento">
+            <div class="mw-heading mw-heading2"><h2>Layout e Espaçamento</h2></div>
+            <div class="mw-heading mw-heading3"><h3>Container Shell</h3></div>
+            <div class="table-responsive">
+              <table class="wikitable wikitable-bordered wikitable-striped">
+                <tbody>
+                  <tr>
+                    <th>Pattern</th>
+                    <th>Preview</th>
+                    <th>Observed Role</th>
+                  </tr>
+                  <tr>
+                    <th><code>container container-custom</code></th>
+                    <td>
+                      <div class="container container-custom">
+                        <div class="row">
+                          <div class="col-sm-4"><div class="network-notice"><div class="network-notice__content-wrapper"><div class="network-notice__content">Left column</div></div><div class="network-notice__close-button" aria-hidden="true"><i class="fa fa-times"></i></div></div></div>
+                          <div class="col-sm-4"><div class="network-notice"><div class="network-notice__content-wrapper"><div class="network-notice__content">Center column</div></div><div class="network-notice__close-button" aria-hidden="true"><i class="fa fa-times"></i></div></div></div>
+                          <div class="col-sm-4"><div class="network-notice"><div class="network-notice__content-wrapper"><div class="network-notice__content">Right column</div></div><div class="network-notice__close-button" aria-hidden="true"><i class="fa fa-times"></i></div></div></div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Full-width page shell with responsive gutters and grid-based subdivision.</td>
+                  </tr>
+                  <tr>
+                    <th><code>table-responsive</code></th>
+                    <td>
+                      <div class="table-responsive">
+                        <table class="wikitable wikitable-bordered wikitable-striped swisstable">
+                          <tbody>
+                            <tr><th>#</th><th>Team</th><th>Matches</th><th>Rounds</th><th>RD</th></tr>
+                            <tr>
+                              <th class="bg-up">1.</th>
+                              <td class="grouptableslot bg-up">
+                                <span data-highlightingclass="FUT Esports" class="team-template-team-standard">
+                                  <span class="team-template-image-icon lightmode"><img alt="FUT Esports" src="images/26px-Futbolist_2021_lightmode.png" decoding="async" width="26" height="50"></span>
+                                  <span class="team-template-image-icon darkmode"><img alt="FUT Esports" src="images/26px-Futbolist_2021_darkmode.png" decoding="async" width="26" height="50"></span>
+                                  <span class="team-template-text mobile-hide"><a href="#4" title="FUT Esports">FUT Esports</a></span>
+                                  <span class="team-template-text mobile-only"><a href="#4" title="FUT Esports">FUT</a></span>
+                                </span>
+                              </td>
+                              <td>3-0</td>
+                              <td>78-46</td>
+                              <td>+32</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </td>
+                    <td>Scrollable data blocks preserve the original tabular density on smaller screens.</td>
+                  </tr>
+                  <tr>
+                    <th><code>template-box</code></th>
+                    <td>
+                      <div>
+                        <div class="template-box">
+                          <div class="general-collapsible brkts-matchlist collapsed">
+                            <div class="general-collapsible-default-header brkts-matchlist-title">
+                              <b class="general-collapsible-default-title">Split Pattern A</b>
+                              <span class="general-collapsible-default-toggle">
+                                <div class="btn btn-secondary btn-extrasmall general-collapsible-expand-button" role="button" tabindex="0"><span><i class="far fa-eye"></i> Show</span></div>
+                                <div class="btn btn-secondary btn-extrasmall general-collapsible-collapse-button" role="button" tabindex="0"><span><i class="far fa-eye-slash"></i> Hide</span></div>
+                              </span>
+                            </div>
+                            <div class="should-collapse brkts-matchlist-collapse-area">
+                              <div class="brkts-matchlist-header">Parallel module</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="template-box">
+                          <div class="general-collapsible brkts-matchlist collapsed">
+                            <div class="general-collapsible-default-header brkts-matchlist-title">
+                              <b class="general-collapsible-default-title">Split Pattern B</b>
+                              <span class="general-collapsible-default-toggle">
+                                <div class="btn btn-secondary btn-extrasmall general-collapsible-expand-button" role="button" tabindex="0"><span><i class="far fa-eye"></i> Show</span></div>
+                                <div class="btn btn-secondary btn-extrasmall general-collapsible-collapse-button" role="button" tabindex="0"><span><i class="far fa-eye-slash"></i> Hide</span></div>
+                              </span>
+                            </div>
+                            <div class="should-collapse brkts-matchlist-collapse-area">
+                              <div class="brkts-matchlist-header">Parallel module</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Inline block modules create the side-by-side tournament layouts used throughout the page.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="5" name="Motion e Interação">
+            <div class="mw-heading mw-heading2"><h2>Motion e Interação</h2></div>
+            <p>The reference shell uses restrained motion: reveal toggles, state transitions on buttons, sprite-based icon hover, and scale feedback on social links.</p>
+
+            <div class="mw-heading mw-heading3"><h3>Galeria de Motion</h3></div>
+            <div>
+              <div class="template-box">
+                <div class="general-collapsible brkts-matchlist collapsed">
+                  <div class="general-collapsible-default-header brkts-matchlist-title">
+                    <b class="general-collapsible-default-title">Collapse Reveal</b>
+                    <span class="general-collapsible-default-toggle">
+                      <div class="btn btn-secondary btn-extrasmall general-collapsible-expand-button" role="button" tabindex="0"><span><i class="far fa-eye"></i> Show</span></div>
+                      <div class="btn btn-secondary btn-extrasmall general-collapsible-collapse-button" role="button" tabindex="0"><span><i class="far fa-eye-slash"></i> Hide</span></div>
+                    </span>
+                  </div>
+                  <div class="should-collapse brkts-matchlist-collapse-area">
+                    <div class="brkts-matchlist-header">Visibility state is driven by the <code>collapsed</code> class.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="template-box">
+                <button type="button" class="btn btn-secondary">Button Transition</button>
+                <p>Hover and focus expose the existing color, outline, and timing rules.</p>
+              </div>
+              <div class="template-box">
+                <ul class="footer-social-media footer__social">
+                  <li><a target="_blank" href="https://discord.gg/liquipedia" class="social-icon discord-icon" title="Discord" aria-label="Discord"><span class="fab fa-discord"></span></a></li>
+                  <li><a target="_blank" href="https://twitter.com/LiquipediaNet" class="social-icon twitter-icon" title="Twitter" aria-label="Twitter"><span class="fab fa-twitter"></span></a></li>
+                  <li><a target="_blank" href="https://www.youtube.com/c/LiquipediaNet" class="social-icon youtube-icon" title="YouTube" aria-label="YouTube"><span class="fab fa-youtube"></span></a></li>
+                </ul>
+                <p>Footer icons scale on hover and retain focus-visible outlines.</p>
+              </div>
+              <div class="template-box">
+                <a href="#6" class="external text"><i class="lp-icon lp-twitch lp-icon-18"></i></a>
+                <a href="#6" class="external text"><i class="lp-icon lp-youtube lp-icon-21"></i></a>
+                <a href="#6" class="external text"><i class="lp-icon lp-esl"></i></a>
+                <p>Sprite icons shift state on hover and dark theme variants.</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="6" name="Ícones">
+            <div class="mw-heading mw-heading2"><h2>Ícones</h2></div>
+            <div class="mw-heading mw-heading3"><h3>Liquipedia Custom Icons</h3></div>
+            <div class="table-responsive">
+              <table class="wikitable wikitable-bordered wikitable-striped">
+                <tbody>
+                  <tr>
+                    <th>Default</th>
+                    <th>2x</th>
+                    <th>3x</th>
+                    <th>Fixed Width</th>
+                  </tr>
+                  <tr>
+                    <td><span class="liquipedia-custom-icon liquipedia-custom-icon-wiki-main"></span></td>
+                    <td><span class="liquipedia-custom-icon liquipedia-custom-icon-wiki-alpha liquipedia-custom-icon-2x"></span></td>
+                    <td><span class="liquipedia-custom-icon liquipedia-custom-icon-wiki-sport liquipedia-custom-icon-3x"></span></td>
+                    <td><span class="liquipedia-custom-icon liquipedia-custom-icon-wiki-main liquipedia-custom-icon-fw"></span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mw-heading mw-heading3"><h3>Sprite Icons</h3></div>
+            <div class="table-responsive">
+              <table class="wikitable wikitable-bordered wikitable-striped">
+                <tbody>
+                  <tr>
+                    <th>18px</th>
+                    <th>21px</th>
+                    <th>32px</th>
+                    <th>Dark Theme</th>
+                  </tr>
+                  <tr>
+                    <td><a href="#6" class="external text"><i class="lp-icon lp-twitch lp-icon-18"></i></a></td>
+                    <td><a href="#6" class="external text"><i class="lp-icon lp-youtube lp-icon-21"></i></a></td>
+                    <td><a href="#6" class="external text"><i class="lp-icon lp-esl"></i></a></td>
+                    <td class="theme--dark"><a href="#6" class="external text"><i class="lp-icon lp-twitch"></i></a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mw-heading mw-heading3"><h3>Social Icons</h3></div>
+            <ul class="footer-social-media footer__social">
+              <li><a target="_blank" href="https://discord.gg/liquipedia" class="social-icon discord-icon" title="Discord" aria-label="Discord"><span class="fab fa-discord"></span></a></li>
+              <li><a target="_blank" href="https://twitter.com/LiquipediaNet" class="social-icon twitter-icon" title="Twitter" aria-label="Twitter"><span class="fab fa-twitter"></span></a></li>
+              <li><a target="_blank" href="https://www.facebook.com/LiquipediaNet" class="social-icon facebook-icon" title="Facebook" aria-label="Facebook"><span class="fab fa-facebook"></span></a></li>
+              <li><a target="_blank" href="https://www.instagram.com/liquipedianet/" class="social-icon instagram-icon" title="Instagram" aria-label="Instagram"><span class="fab fa-instagram"></span></a></li>
+              <li><a target="_blank" href="https://www.youtube.com/c/LiquipediaNet" class="social-icon youtube-icon" title="YouTube" aria-label="YouTube"><span class="fab fa-youtube"></span></a></li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer id="footer" class="footer liquipedia-footer">
+  <div class="container container-custom">
+    <div class="row">
+      <div class="col-sm-4">
+        <a class="footer__logo" href="#top" title="Liquipedia Portal"></a>
+        <ul class="footer__list footer__list--contact">
+          <li><a href="#0">Hero</a></li>
+          <li><a href="#3">Components</a></li>
+          <li><a href="#5">Motion</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-4">
+        <ul class="footer__list">
+          <li><a href="#1">Tipografia</a></li>
+          <li><a href="#2">Cores e Superfícies</a></li>
+          <li><a href="#4">Layout e Espaçamento</a></li>
+          <li><a href="#6">Ícones</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-4">
+        <ul class="footer-social-media footer__social">
+          <li><a target="_blank" href="https://discord.gg/liquipedia" class="social-icon discord-icon" title="Discord" aria-label="Discord"><span class="fab fa-discord"></span></a></li>
+          <li><a target="_blank" href="https://twitter.com/LiquipediaNet" class="social-icon twitter-icon" title="Twitter" aria-label="Twitter"><span class="fab fa-twitter"></span></a></li>
+          <li><a target="_blank" href="https://www.youtube.com/c/LiquipediaNet" class="social-icon youtube-icon" title="YouTube" aria-label="YouTube"><span class="fab fa-youtube"></span></a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const dropdown = document.querySelector('#dropdown-theme');
+  const toggle = dropdown ? dropdown.querySelector('[data-component="theme-switch"]') : null;
+  const menu = dropdown ? dropdown.querySelector('.dropdown-menu') : null;
+  const themeLabel = dropdown ? dropdown.querySelector('[data-theme-label]') : null;
+  const themeIcon = toggle ? toggle.querySelector('.icon') : null;
+  const themeButtons = dropdown ? Array.from(dropdown.querySelectorAll('[data-set-theme]')) : [];
+  const icons = {
+    light: 'fa-sun',
+    dark: 'fa-moon',
+    system: 'fa-desktop'
+  };
+
+  function bindAction(node, handler) {
+    if (!node) {
+      return;
+    }
+
+    node.addEventListener('click', (event) => {
+      handler(event);
+    });
+
+    node.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        handler(event);
+      }
+    });
+  }
+
+  function currentTheme(theme) {
+    if (
+      theme === 'dark' ||
+      (
+        theme === 'system' &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+      )
+    ) {
+      return 'theme--dark';
+    }
+
+    return 'theme--light';
+  }
+
+  function applyTheme(theme) {
+    const selectedTheme = theme || 'system';
+    const activeTheme = currentTheme(selectedTheme);
+
+    root.classList.remove('theme--light', 'theme--dark');
+    root.classList.add(activeTheme);
+
+    themeButtons.forEach((button) => {
+      const isSelected = button.dataset.setTheme === selectedTheme;
+      button.setAttribute('aria-selected', String(isSelected));
+    });
+
+    if (themeLabel) {
+      themeLabel.textContent = selectedTheme === 'system'
+        ? 'Auto'
+        : selectedTheme.charAt(0).toUpperCase() + selectedTheme.slice(1);
+    }
+
+    if (toggle) {
+      toggle.setAttribute('aria-label', `${themeLabel ? themeLabel.textContent : 'Auto'} selected`);
+    }
+
+    if (themeIcon) {
+      themeIcon.classList.remove('fa-sun', 'fa-moon', 'fa-desktop');
+      themeIcon.classList.add(icons[selectedTheme]);
+    }
+  }
+
+  bindAction(toggle, (event) => {
+    event.preventDefault();
+    if (!dropdown || !menu) {
+      return;
+    }
+    dropdown.classList.toggle('show');
+    menu.classList.toggle('show');
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!dropdown || dropdown.contains(event.target)) {
+      return;
+    }
+    dropdown.classList.remove('show');
+    if (menu) {
+      menu.classList.remove('show');
+    }
+  });
+
+  themeButtons.forEach((button) => {
+    bindAction(button, () => {
+      const theme = button.dataset.setTheme || 'system';
+      window.localStorage.setItem('LiquipediaTheme', theme);
+      applyTheme(theme);
+      if (dropdown) {
+        dropdown.classList.remove('show');
+      }
+      if (menu) {
+        menu.classList.remove('show');
+      }
+    });
+  });
+
+  document.querySelectorAll('.general-collapsible').forEach((collapsible) => {
+    collapsible.querySelectorAll('.general-collapsible-expand-button, .general-collapsible-collapse-button').forEach((button) => {
+      bindAction(button, () => {
+        collapsible.classList.toggle('collapsed');
+      });
+    });
+  });
+
+  document.querySelectorAll('[data-component="network-notice-close-button"]').forEach((button) => {
+    bindAction(button, () => {
+      const notice = button.closest('.network-notice');
+      if (notice) {
+        notice.remove();
+      }
+    });
+  });
+
+  applyTheme(window.localStorage.getItem('LiquipediaTheme') || 'system');
+})();
+</script>
+</body>
+</html>
