@@ -2,8 +2,28 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 
+class Double(models.Model):
+    name = models.CharField("Nome", max_length=100)
+    player_1 = models.CharField("Jogador 1", max_length=100)
+    player_2 = models.CharField("Jogador 2", max_length=100)
+
+    class Meta:
+        verbose_name = "Dupla"
+        verbose_name_plural = "Duplas"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 class Group(models.Model):
     name = models.CharField("Nome", max_length=10, unique=True)
+    doubles = models.ManyToManyField(
+        Double,
+        related_name="groups",
+        verbose_name="Duplas",
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Grupo"
@@ -14,86 +34,37 @@ class Group(models.Model):
         return f"Grupo {self.name}"
 
 
-class Team(models.Model):
-    group = models.ForeignKey(
-        Group,
-        on_delete=models.CASCADE,
-        related_name="teams",
-        verbose_name="Grupo",
-    )
-    team_number = models.PositiveIntegerField("Numero da dupla", default=0)
-    player1_name = models.CharField("Jogador 1", max_length=100)
-    player2_name = models.CharField("Jogador 2", max_length=100)
-
-    class Meta:
-        verbose_name = "Dupla"
-        verbose_name_plural = "Duplas"
-        ordering = ["team_number"]
-        unique_together = [["player1_name", "player2_name", "group"]]
-
-    def __str__(self):
-        return f"Dupla {self.team_number}"
-
-    def display_name(self, show_names=False):
-        if show_names:
-            return f"Dupla {self.team_number} - {self.player1_name} / {self.player2_name}"
-        return f"Dupla {self.team_number}"
-
-
 class Match(models.Model):
-    PHASE_GROUP = "group"
-    PHASE_QUARTERFINAL = "quarterfinal"
+    PHASE_GROUP = "grupo"
     PHASE_SEMIFINAL = "semifinal"
-    PHASE_THIRD_PLACE = "third_place"
     PHASE_FINAL = "final"
-    PHASE_FIFTH_TO_EIGHTH = "fifth_to_eighth"
-    PHASE_SEVENTH_PLACE = "seventh_place"
-    PHASE_FIFTH_PLACE = "fifth_place"
-    PHASE_TWELFTH_TO_FOURTEENTH = "twelfth_to_fourteenth"
-    PHASE_NINTH_TO_ELEVENTH = "ninth_to_eleventh"
+    PHASE_DISPUTE = "disputa"
 
     PHASE_CHOICES = [
-        (PHASE_GROUP, "Fase de grupos"),
-        (PHASE_QUARTERFINAL, "Quartas de final"),
+        (PHASE_GROUP, "Grupo"),
         (PHASE_SEMIFINAL, "Semifinal"),
-        (PHASE_THIRD_PLACE, "Disputa de 3\u00b0 lugar"),
         (PHASE_FINAL, "Final"),
-        (PHASE_FIFTH_TO_EIGHTH, "Disputa de 5\u00b0 ao 8\u00b0"),
-        (PHASE_SEVENTH_PLACE, "Disputa de 7\u00b0 e 8\u00b0"),
-        (PHASE_FIFTH_PLACE, "Disputa de 5\u00b0 e 6\u00b0"),
-        (PHASE_TWELFTH_TO_FOURTEENTH, "Disputa do 12\u00b0 ao 14\u00b0"),
-        (PHASE_NINTH_TO_ELEVENTH, "Disputa do 9\u00b0 ao 11\u00b0"),
-    ]
-
-    BRACKET_GROUP = "group"
-    BRACKET_MAIN = "main"
-    BRACKET_PLACEMENT = "placement"
-
-    BRACKET_CHOICES = [
-        (BRACKET_GROUP, "Grupo"),
-        (BRACKET_MAIN, "Mata-mata principal"),
-        (BRACKET_PLACEMENT, "Disputa de posicoes"),
+        (PHASE_DISPUTE, "Disputa"),
     ]
 
     STATUS_PENDING = "pending"
-    STATUS_READY = "ready"
     STATUS_IN_PROGRESS = "in_progress"
     STATUS_FINISHED = "finished"
-    STATUS_BLOCKED = "blocked"
 
     STATUS_CHOICES = [
         (STATUS_PENDING, "Pendente"),
-        (STATUS_READY, "Pronta"),
         (STATUS_IN_PROGRESS, "Em andamento"),
         (STATUS_FINISHED, "Finalizada"),
-        (STATUS_BLOCKED, "Bloqueada"),
     ]
 
-    phase = models.CharField("Fase", max_length=30, choices=PHASE_CHOICES)
-    match_number = models.PositiveIntegerField("Numero do jogo")
-    bracket_type = models.CharField(
-        "Tipo de bracket", max_length=10, choices=BRACKET_CHOICES
+    phase = models.CharField("Tipo", max_length=20, choices=PHASE_CHOICES)
+    status = models.CharField(
+        "Status",
+        max_length=15,
+        choices=STATUS_CHOICES,
+        default=STATUS_PENDING,
     )
+    match_number = models.PositiveIntegerField("Numero do jogo", unique=True)
     group = models.ForeignKey(
         Group,
         on_delete=models.SET_NULL,
@@ -102,117 +73,143 @@ class Match(models.Model):
         related_name="matches",
         verbose_name="Grupo",
     )
-    team_a = models.ForeignKey(
-        Team,
+    double_1 = models.ForeignKey(
+        Double,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="matches_as_team_a",
-        verbose_name="Time A",
+        related_name="matches_as_double_1",
+        verbose_name="Dupla 1",
     )
-    team_b = models.ForeignKey(
-        Team,
+    double_2 = models.ForeignKey(
+        Double,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="matches_as_team_b",
-        verbose_name="Time B",
+        related_name="matches_as_double_2",
+        verbose_name="Dupla 2",
     )
     winner = models.ForeignKey(
-        Team,
+        Double,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="matches_won",
         verbose_name="Vencedor",
     )
-    status = models.CharField(
-        "Status", max_length=15, choices=STATUS_CHOICES, default=STATUS_PENDING
-    )
-    best_of = models.PositiveIntegerField("Melhor de", default=3)
-    source_match_a = models.ForeignKey(
+    source_match_1 = models.ForeignKey(
         "self",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="dependent_as_team_a",
-        verbose_name="Jogo de origem time A",
-        help_text="Partida que define o time A desta partida",
+        related_name="dependent_as_double_1",
+        verbose_name="Jogo de origem dupla 1",
+        help_text="Partida que define a dupla 1 desta partida",
     )
-    source_match_a_is_winner = models.BooleanField(
-        "Time A e vencedor do jogo de origem",
+    source_match_1_is_winner = models.BooleanField(
+        "Dupla 1 e vencedora do jogo de origem",
         null=True,
         blank=True,
-        help_text="True se time A vem do vencedor, False se do perdedor",
+        help_text="True se dupla 1 vem do vencedor, False se do perdedor",
     )
-    source_match_b = models.ForeignKey(
+    source_match_2 = models.ForeignKey(
         "self",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="dependent_as_team_b",
-        verbose_name="Jogo de origem time B",
-        help_text="Partida que define o time B desta partida",
+        related_name="dependent_as_double_2",
+        verbose_name="Jogo de origem dupla 2",
+        help_text="Partida que define a dupla 2 desta partida",
     )
-    source_match_b_is_winner = models.BooleanField(
-        "Time B e vencedor do jogo de origem",
+    source_match_2_is_winner = models.BooleanField(
+        "Dupla 2 e vencedora do jogo de origem",
         null=True,
         blank=True,
-        help_text="True se time B vem do vencedor, False se do perdedor",
+        help_text="True se dupla 2 vem do vencedor, False se do perdedor",
     )
-    source_team_a = models.CharField(
-        "Descricao origem time A", max_length=100, blank=True, default=""
+    source_double_1_desc = models.CharField(
+        "Descricao origem dupla 1",
+        max_length=100,
+        blank=True,
+        default="",
     )
-    source_team_b = models.CharField(
-        "Descricao origem time B", max_length=100, blank=True, default=""
+    source_double_2_desc = models.CharField(
+        "Descricao origem dupla 2",
+        max_length=100,
+        blank=True,
+        default="",
     )
     final_position_winner = models.PositiveIntegerField(
-        "Posicao vencedor", null=True, blank=True
+        "Posicao vencedor",
+        null=True,
+        blank=True,
     )
     final_position_loser = models.PositiveIntegerField(
-        "Posicao perdedor", null=True, blank=True
+        "Posicao perdedor",
+        null=True,
+        blank=True,
     )
     sort_order = models.PositiveIntegerField("Ordem", default=0)
-    scheduled_date = models.DateTimeField("Data planejada", null=True, blank=True)
-    created_at = models.DateTimeField("Criado em", auto_now_add=True)
-    updated_at = models.DateTimeField("Atualizado em", auto_now=True)
 
     class Meta:
         verbose_name = "Partida"
         verbose_name_plural = "Partidas"
         ordering = ["sort_order", "match_number"]
-        unique_together = [["match_number", "bracket_type"]]
 
     def __str__(self):
-        team_a = self.source_team_a or str(self.team_a) if self.team_a else "A definir"
-        team_b = self.source_team_b or str(self.team_b) if self.team_b else "A definir"
-        return f"Jogo {self.match_number}: {team_a} vs {team_b}"
+        d1 = (
+            self.source_double_1_desc
+            or str(self.double_1)
+            if self.double_1
+            else "A definir"
+        )
+        d2 = (
+            self.source_double_2_desc
+            or str(self.double_2)
+            if self.double_2
+            else "A definir"
+        )
+        return f"Jogo {self.match_number}: {d1} vs {d2}"
+
+    @property
+    def best_of(self):
+        if self.phase == self.PHASE_DISPUTE:
+            return 1
+        return 3
+
+    @property
+    def phase_label(self):
+        labels = {
+            1: "Disputa 12\u00ba ao 14\u00ba",
+            2: "Disputa 12\u00ba ao 14\u00ba",
+            3: "Disputa 9\u00ba ao 11\u00ba",
+            4: "Disputa 9\u00ba ao 11\u00ba",
+            5: "Quartas de Final",
+            6: "Quartas de Final",
+            7: "Quartas de Final",
+            8: "Quartas de Final",
+            9: "Disputa 5\u00ba ao 8\u00ba",
+            10: "Disputa 5\u00ba ao 8\u00ba",
+            11: "Disputa 7\u00ba e 8\u00ba",
+            12: "Disputa 5\u00ba e 6\u00ba",
+            13: "Semifinal",
+            14: "Semifinal",
+            15: "Disputa 3\u00ba e 4\u00ba",
+            16: "Final",
+        }
+        if self.match_number >= 1000:
+            return "Fase de Grupos"
+        return labels.get(self.match_number, self.get_phase_display())
 
     def clean(self):
         errors = {}
-        if self.best_of not in (1, 3):
-            errors["best_of"] = "best_of deve ser 1 ou 3."
-        if self.team_a_id and self.team_b_id and self.team_a_id == self.team_b_id:
-            errors["team_b"] = "Time B deve ser diferente de Time A."
-        if self.status == self.STATUS_FINISHED:
-            if not self.team_a_id:
-                errors["team_a"] = "Time A e obrigatorio para partida finalizada."
-            if not self.team_b_id:
-                errors["team_b"] = "Time B e obrigatorio para partida finalizada."
-            if not self.winner_id:
-                errors["winner"] = "Vencedor e obrigatorio para partida finalizada."
-            elif self.winner_id not in (self.team_a_id, self.team_b_id):
-                errors["winner"] = "Vencedor deve ser Time A ou Time B."
-        if self.status == self.STATUS_READY:
-            if not self.team_a_id:
-                errors["team_a"] = "Time A e obrigatorio para partida pronta."
-            if not self.team_b_id:
-                errors["team_b"] = "Time B e obrigatorio para partida pronta."
+        if self.double_1_id and self.double_2_id and self.double_1_id == self.double_2_id:
+            errors["double_2"] = "Dupla 2 deve ser diferente de Dupla 1."
         if errors:
             raise ValidationError(errors)
 
 
-class MatchSet(models.Model):
+class Set(models.Model):
     match = models.ForeignKey(
         Match,
         on_delete=models.CASCADE,
@@ -220,8 +217,38 @@ class MatchSet(models.Model):
         verbose_name="Partida",
     )
     set_number = models.PositiveIntegerField("Set")
-    team_a_points = models.PositiveIntegerField("Pontos time A", default=0)
-    team_b_points = models.PositiveIntegerField("Pontos time B", default=0)
+    double_1 = models.ForeignKey(
+        Double,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="sets_as_double_1",
+        verbose_name="Dupla 1",
+    )
+    double_2 = models.ForeignKey(
+        Double,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="sets_as_double_2",
+        verbose_name="Dupla 2",
+    )
+    points_double_1 = models.PositiveIntegerField(
+        "Pontos dupla 1",
+        default=0,
+    )
+    points_double_2 = models.PositiveIntegerField(
+        "Pontos dupla 2",
+        default=0,
+    )
+    winner = models.ForeignKey(
+        Double,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="sets_won",
+        verbose_name="Vencedor",
+    )
 
     class Meta:
         verbose_name = "Set"
@@ -230,33 +257,38 @@ class MatchSet(models.Model):
         unique_together = [["match", "set_number"]]
 
     def __str__(self):
-        return f"Set {self.set_number} - Jogo {self.match.match_number}: {self.team_a_points}x{self.team_b_points}"
+        return (
+            f"Set {self.set_number} - Jogo {self.match.match_number}: "
+            f"{self.points_double_1}x{self.points_double_2}"
+        )
 
     def clean(self):
         errors = {}
-        if self.team_a_points == self.team_b_points:
-            errors["team_a_points"] = "Set nao pode terminar empatado."
-            errors["team_b_points"] = "Set nao pode terminar empatado."
+        if self.points_double_1 == self.points_double_2:
+            if self.points_double_1 > 0:
+                errors["points_double_1"] = "Set nao pode terminar empatado."
+                errors["points_double_2"] = "Set nao pode terminar empatado."
         else:
-            if self.team_a_points < 11 and self.team_b_points < 11:
-                errors["team_a_points"] = "Pelo menos um lado deve atingir 11 pontos."
-                errors["team_b_points"] = "Pelo menos um lado deve atingir 11 pontos."
-            if self.team_a_points > 11 or self.team_b_points > 11:
-                errors["team_a_points"] = "Pontuacao maxima por set e 11 pontos."
-                errors["team_b_points"] = "Pontuacao maxima por set e 11 pontos."
+            if self.points_double_1 < 11 and self.points_double_2 < 11:
+                if self.points_double_1 > 0 or self.points_double_2 > 0:
+                    errors["points_double_1"] = (
+                        "Pelo menos um lado deve atingir 11 pontos."
+                    )
+                    errors["points_double_2"] = (
+                        "Pelo menos um lado deve atingir 11 pontos."
+                    )
+            if self.points_double_1 > 11 or self.points_double_2 > 11:
+                errors["points_double_1"] = (
+                    "Pontuacao maxima por set e 11 pontos."
+                )
+                errors["points_double_2"] = (
+                    "Pontuacao maxima por set e 11 pontos."
+                )
         if self.match_id:
             best_of = self.match.best_of
             if self.set_number < 1 or self.set_number > best_of:
                 errors["set_number"] = (
                     f"Numero do set deve estar entre 1 e {best_of}."
-                )
-            existing_count = MatchSet.objects.filter(match=self.match).exclude(
-                pk=self.pk
-            ).count()
-            if existing_count + 1 > self.match.best_of:
-                errors["set_number"] = (
-                    f"Partida melhor de {self.match.best_of} permite no maximo "
-                    f"{self.match.best_of} set(s)."
                 )
         if errors:
             raise ValidationError(errors)
