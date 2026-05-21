@@ -1,13 +1,11 @@
 from django.contrib import admin, messages
-from django.core.exceptions import ValidationError
 
-from tournament.models import Group, Team, Match, MatchSet
+from tournament.models import Double, Group, Match, Set as MatchSet
 from tournament.services import (
-    determine_match_winner,
-    validate_match_sets,
+    ensure_sets,
+    update_match_from_sets,
     propagate_match_result,
     recalculate_tournament,
-    resolve_group_positions,
 )
 
 admin.site.site_header = "PicklePesp - Administracao"
@@ -15,11 +13,12 @@ admin.site.site_title = "PicklePesp Admin"
 admin.site.index_title = "Gerenciamento do Campeonato"
 
 
-class MatchSetInline(admin.TabularInline):
+class SetInline(admin.TabularInline):
     model = MatchSet
     extra = 0
     min_num = 0
-    fields = ["set_number", "team_a_points", "team_b_points"]
+    fields = ["set_number", "points_double_1", "points_double_2", "winner"]
+    readonly_fields = ["winner"]
     verbose_name = "Set"
     verbose_name_plural = "Sets"
 
@@ -29,28 +28,31 @@ class MatchSetInline(admin.TabularInline):
         return 3
 
 
-class TeamInline(admin.TabularInline):
-    model = Team
-    extra = 0
-    fields = ["team_number", "player1_name", "player2_name"]
-    verbose_name = "Dupla"
-    verbose_name_plural = "Duplas"
-
-
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ["name"]
+    list_display = ["name", "doubles_count"]
     search_fields = ["name"]
-    inlines = [TeamInline]
+    fields = ["name", "doubles"]
+    filter_horizontal = ["doubles"]
+
+    def doubles_count(self, obj):
+        return obj.doubles.count()
+    doubles_count.short_description = "Duplas"
 
 
-@admin.register(Team)
-class TeamAdmin(admin.ModelAdmin):
-    list_display = ["team_number", "__str__", "player1_name", "player2_name", "group"]
-    list_filter = ["group"]
-    search_fields = ["player1_name", "player2_name", "team_number"]
-    list_select_related = ["group"]
-    ordering = ["team_number"]
+@admin.register(Double)
+class DoubleAdmin(admin.ModelAdmin):
+    list_display = ["name", "player_1", "player_2"]
+    search_fields = ["name", "player_1", "player_2"]
+    fields = ["name", "player_1", "player_2", "display_groups"]
+    readonly_fields = ["display_groups"]
+
+    def display_groups(self, obj):
+        groups = obj.groups.all()
+        if groups:
+            return ", ".join(str(g) for g in groups)
+        return "Nenhum grupo"
+    display_groups.short_description = "Grupos"
 
 
 @admin.register(Match)
@@ -58,25 +60,25 @@ class MatchAdmin(admin.ModelAdmin):
     list_display = [
         "match_number",
         "phase",
-        "bracket_type",
-        "team_a",
-        "team_b",
-        "winner",
+        "double_1",
+        "double_2",
         "status",
-        "best_of",
+        "winner",
     ]
-    list_filter = ["phase", "bracket_type", "status", "group"]
+    list_filter = ["phase", "status", "group"]
     search_fields = [
-        "team_a__player1_name",
-        "team_a__player2_name",
-        "team_b__player1_name",
-        "team_b__player2_name",
-        "source_team_a",
-        "source_team_b",
+        "double_1__name",
+        "double_1__player_1",
+        "double_1__player_2",
+        "double_2__name",
+        "double_2__player_1",
+        "double_2__player_2",
+        "source_double_1_desc",
+        "source_double_2_desc",
     ]
-    list_select_related = ["team_a", "team_b", "winner", "group"]
-    inlines = [MatchSetInline]
-    readonly_fields = ["winner"]
+    list_select_related = ["double_1", "double_2", "winner", "group"]
+    inlines = [SetInline]
+    readonly_fields = ["status", "winner"]
     fieldsets = (
         (
             "Identificacao",
@@ -84,26 +86,23 @@ class MatchAdmin(admin.ModelAdmin):
                 "fields": (
                     "match_number",
                     "phase",
-                    "bracket_type",
                     "group",
-                    "status",
-                    "best_of",
                     "sort_order",
                 ),
             },
         ),
         (
-            "Times",
+            "Duplas",
             {
                 "fields": (
-                    "team_a",
-                    "team_b",
-                    "source_match_a",
-                    "source_match_a_is_winner",
-                    "source_match_b",
-                    "source_match_b_is_winner",
-                    "source_team_a",
-                    "source_team_b",
+                    "double_1",
+                    "double_2",
+                    "source_match_1",
+                    "source_match_1_is_winner",
+                    "source_match_2",
+                    "source_match_2_is_winner",
+                    "source_double_1_desc",
+                    "source_double_2_desc",
                 ),
             },
         ),
@@ -113,13 +112,12 @@ class MatchAdmin(admin.ModelAdmin):
                 "fields": ("winner", "final_position_winner", "final_position_loser"),
             },
         ),
-        (
-            "Planejamento",
-            {
-                "fields": ("scheduled_date",),
-            },
-        ),
     )
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if obj.pk:
+            ensure_sets(obj)
 
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
@@ -127,41 +125,21 @@ class MatchAdmin(admin.ModelAdmin):
         obj = form.instance
         obj.refresh_from_db()
 
-        if obj.status == Match.STATUS_FINISHED:
-            errors = validate_match_sets(obj)
-            if errors:
-                for error in errors:
-                    messages.error(request, error)
-                obj.status = Match.STATUS_IN_PROGRESS
-                Match.objects.filter(pk=obj.pk).update(
-                    status=Match.STATUS_IN_PROGRESS
-                )
-                return
+        update_match_from_sets(obj)
+        obj.refresh_from_db()
 
-            winner = determine_match_winner(obj)
-            if winner:
-                Match.objects.filter(pk=obj.pk).update(winner=winner)
-                obj.refresh_from_db()
-                messages.success(
-                    request, f"Vencedor definido automaticamente: {winner}"
-                )
-            else:
-                messages.warning(
-                    request,
-                    "Nao foi possivel determinar o vencedor a partir dos sets.",
-                )
-                obj.status = Match.STATUS_IN_PROGRESS
-                Match.objects.filter(pk=obj.pk).update(
-                    status=Match.STATUS_IN_PROGRESS
-                )
-        elif obj.team_a_id and obj.team_b_id and obj.status in (
-            Match.STATUS_PENDING,
-            Match.STATUS_BLOCKED,
-        ):
-            Match.objects.filter(pk=obj.pk).update(status=Match.STATUS_READY)
+        if obj.status == Match.STATUS_FINISHED:
+            propagate_match_result(obj)
+            messages.success(
+                request,
+                f"Partida finalizada automaticamente. Vencedor: {obj.winner}",
+            )
 
         try:
             recalculate_tournament()
-            messages.info(request, "Classificacao e confrontos recalculados automaticamente.")
+            messages.info(
+                request,
+                "Classificacao e confrontos recalculados automaticamente.",
+            )
         except Exception as e:
             messages.error(request, f"Erro ao recalcular: {e}")
