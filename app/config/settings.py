@@ -12,9 +12,13 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() in ("true", "1", "yes")
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")
 
-CSRF_TRUSTED_ORIGINS = [
-    f"https://{h.strip()}" for h in ALLOWED_HOSTS if h.strip() and h.strip() != "*"
-]
+_trusted = os.environ.get("CSRF_TRUSTED_ORIGINS", "")
+if _trusted:
+    CSRF_TRUSTED_ORIGINS = [o.strip() for o in _trusted.split(",") if o.strip()]
+else:
+    CSRF_TRUSTED_ORIGINS = [f"https://{h.strip()}" for h in ALLOWED_HOSTS if h.strip() and h.strip() != "*"]
+    if not CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS = ["https://picklepesp.up.railway.app"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
