@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}PicklePesp - Posicoes{% endblock %}
+
+{% block nav-placements-active %}active{% endblock %}
+{% block nav-placements-class %}text-green-400 bg-green-400/10{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <p class="section-title">Disputa de Posicoes</p>
+    <h1 class="page-title">9o ao 14o Lugar</h1>
+    <p class="page-subtitle">Chave de posicoes finais</p>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20V10"/>
+            <path d="M18 20V4"/>
+            <path d="M6 20v-4"/>
+        </svg>
+        <span class="text-sm font-semibold text-white">Estrutura do Bracket</span>
+    </div>
+    <div class="card-body">
+        <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="info-item">
+                <span class="info-label">Disputa 12o-14o</span>
+                <span class="info-value">Jogos 1-2</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Disputa 9o-11o</span>
+                <span class="info-value">Jogos 3-4</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="empty-state">
+        <div class="empty-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20V10"/>
+                <path d="M18 20V4"/>
+                <path d="M6 20v-4"/>
+            </svg>
+        </div>
+        <div class="empty-title">Bracket em breve</div>
+        <div class="empty-desc">O chaveamento de posicoes sera montado apos a fase de grupos definir os classificados.</div>
+    </div>
+</div>
+{% endblock %}

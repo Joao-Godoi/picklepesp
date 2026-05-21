@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}PicklePesp - Playoffs{% endblock %}
+
+{% block nav-playoffs-active %}active{% endblock %}
+{% block nav-playoffs-class %}text-green-400 bg-green-400/10{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <p class="section-title">Mata-Mata</p>
+    <h1 class="page-title">Playoffs</h1>
+    <p class="page-subtitle">Chave principal do campeonato</p>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="8 6 2 12 8 18"/>
+            <polyline points="16 6 22 12 16 18"/>
+        </svg>
+        <span class="text-sm font-semibold text-white">Estrutura do Bracket</span>
+    </div>
+    <div class="card-body">
+        <div class="info-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="info-item">
+                <span class="info-label">Quartas de final</span>
+                <span class="info-value">Jogos 5-8</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Semifinais</span>
+                <span class="info-value">Jogos 13-14</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Disputa 3o lugar</span>
+                <span class="info-value">Jogo 15</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Final</span>
+                <span class="info-value">Jogo 16</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Disputa 5o-8o</span>
+                <span class="info-value">Jogos 9-12</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="empty-state">
+        <div class="empty-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="8 6 2 12 8 18"/>
+                <polyline points="16 6 22 12 16 18"/>
+            </svg>
+        </div>
+        <div class="empty-title">Bracket em breve</div>
+        <div class="empty-desc">O chaveamento sera montado apos a fase de grupos definir os classificados.</div>
+    </div>
+</div>
+{% endblock %}

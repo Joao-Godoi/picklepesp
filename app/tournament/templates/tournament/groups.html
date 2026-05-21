@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}PicklePesp - Grupos{% endblock %}
+
+{% block nav-groups-active %}active{% endblock %}
+{% block nav-groups-class %}text-green-400 bg-green-400/10{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <p class="section-title">Fase de Grupos</p>
+    <h1 class="page-title">Classificacao dos Grupos</h1>
+    <p class="page-subtitle">Acompanhe a classificacao e resultados</p>
+</div>
+
+<div class="card">
+    <div class="empty-state">
+        <div class="empty-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+        </div>
+        <div class="empty-title">Grupos em breve</div>
+        <div class="empty-desc">A classificacao dos grupos sera exibida aqui assim que os resultados forem lancados.</div>
+        <div class="mt-4 flex items-center gap-3 text-xs text-slate-500">
+            <span class="badge badge-muted">Grupo A &middot; 5 duplas</span>
+            <span class="badge badge-muted">Grupo B &middot; 5 duplas</span>
+            <span class="badge badge-muted">Grupo C &middot; 4 duplas</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
